@@ -14,19 +14,19 @@ int numPieces = torrent.numPieces();
 int pieceSize = torrent.pieceSize();
 std::string name = torrent.name();
 
+Client client(torrent);
+client.start(); // Starts the torrent in a new thread [NOT SURE, MAY CHANGE]
 
-torrent.start(); // Starts the torrent in a new thread [NOT SURE, MAY CHANGE]
-
-while (!torrent.hasFinished()){
+while (!client.hasFinished()){
     std::cout << "Here are the stats for the torrent \"" << name << "\"" << std::endl;
 
-    float percentComplete = torrent.percentComplete();
+    float percentComplete = client.percentComplete();
     std::cout << "The torrent is " << (int) percentComplete << " % complete" << std::endl;
 
-    int bytesDownloaded = torrent.bytesDownloaded();
+    int bytesDownloaded = client.bytesDownloaded();
     std::cout << "Downloaded: " << bytesDownloaded << " / " << totalSize << std::endl;
 
-    int numActivePeers = torrent.numActivePeers();
+    int numActivePeers = client.numActivePeers();
     std::cout << "Sharing data with " << numActivePeers << " peers." << std::endl;
 
     sleep(10);
