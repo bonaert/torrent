@@ -3,5 +3,5 @@ project(torrent)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp Torrent.cpp Torrent.hpp Tracker.cpp Tracker.hpp)
+set(SOURCE_FILES main.cpp Torrent.cpp Torrent.hpp Tracker.cpp Tracker.hpp Peer.cpp Peer.hpp Client.cpp Client.hpp)
 add_executable(torrent ${SOURCE_FILES})

@@ -5,7 +5,7 @@ Torrent::Torrent(std::string torrentFileName) : torrentFileName(torrentFileName)
     parseTorrentFile();
 }
 
-float Torrent::size() {
+int Torrent::size() {
     return 0;
 }
 

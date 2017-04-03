@@ -10,7 +10,7 @@
 
 void downloadTorrent(std::string filename) {
     Torrent torrent = Torrent(filename);
-    float totalSize = torrent.size();
+    int totalSize = torrent.size();
     int numPieces = torrent.numPieces();
     int pieceSize = torrent.pieceSize();
     std::string name = torrent.name();

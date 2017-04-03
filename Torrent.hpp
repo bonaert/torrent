@@ -34,17 +34,17 @@ typedef struct MetaInfo {
 
 class Torrent {
 private:
+    void parseTorrentFile();
+
+public:
     std::string torrentFileName;
     MetaInfo metaInfo;
 
 
 
-    void parseTorrentFile();
-
-public:
     Torrent(std::string torrentFileName);
 
-    float size();
+    int size();
 
     int numPieces();
 
