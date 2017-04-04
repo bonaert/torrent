@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <iostream>
 #include "Torrent.hpp"
+#include "Client.hpp"
 
 /*
  * The following examples methods demonstrate how the API should be used.
@@ -16,18 +17,20 @@ void downloadTorrent(std::string filename) {
     std::string name = torrent.name();
 
 
-    torrent.start(); // Starts the torrent in a new thread?
 
-    while (!torrent.hasFinished()){
+    Client client(torrent);
+    client.start(); // Starts the torrent in a new thread [NOT SURE, MAY CHANGE]
+
+    while (!client.hasFinished()){
         std::cout << "Here are the stats for the torrent \"" << name << "\"" << std::endl;
 
-        float percentComplete = torrent.percentComplete();
+        float percentComplete = client.percentComplete();
         std::cout << "The torrent is " << (int) percentComplete << " % complete" << std::endl;
 
-        int bytesDownloaded = torrent.bytesDownloaded();
+        int bytesDownloaded = client.bytesDownloaded();
         std::cout << "Downloaded: " << bytesDownloaded << " / " << totalSize << std::endl;
 
-        int numActivePeers = torrent.numActivePeers();
+        int numActivePeers = client.numActivePeers();
         std::cout << "Sharing data with " << numActivePeers << " peers." << std::endl;
 
         sleep(10);

@@ -4,7 +4,7 @@
 
 
 bool contains(const std::vector<std::string>& vector, const std::string& element){
-    return std::find(vector.begin(), vector.end(), element) != vector.end()
+    return std::find(vector.begin(), vector.end(), element) != vector.end();
 }
 
 
@@ -186,7 +186,10 @@ void TrackerResponse::parseResponse(const BDictionary & response) {
     // https://wiki.theory.org/BitTorrentSpecification#Tracker_Response
     // Currently we're assuming we'll only receive the dictionary model of peers
 
-    for (const BDictionary& peerDict: response.getDictionaryList("")) {
+
+    const BList &peersList = response.getList("peers");
+    for (int i = 0; i < peersList.size(); ++i) {
+        const BDictionary& peerDict = peersList.getDictionary(i);
         Peer peer;
         peer.peerID = peerDict.getString("peer id");
         peer.ip = peerDict.getString("ip");

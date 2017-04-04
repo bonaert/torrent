@@ -19,7 +19,6 @@ private:
 
 
 public:
-    [HASH_SIZE]
     TrackerRequest(std::string announceUrl);
     TrackerRequest& addInfoHash(const std::string& infoHash);
     TrackerRequest& addPeerID(const std::string& peerID);

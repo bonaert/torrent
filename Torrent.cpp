@@ -1,5 +1,4 @@
 #include "Torrent.hpp"
-#include <fstream>
 
 Torrent::Torrent(std::string torrentFileName) : torrentFileName(torrentFileName) {
     parseTorrentFile();
@@ -62,7 +61,7 @@ void Torrent::parseTorrentFile() {
     metaInfo.announceURL = metaInfoDict.getString("annouce");
 
     if (metaInfoDict.contains("creation date")) {
-        metaInfo.creationDate = metaInfoDict.getInt("creation date");
+        metaInfo.creationDate = (int) metaInfoDict.getInt("creation date");
     }
 
     if (metaInfoDict.contains("comment")) {
@@ -106,16 +105,18 @@ void Torrent::parseTorrentFile() {
 
         /* Parse single file */
         FileInfo info;
-        info.numBytes = infoDictionary.getInt("length");
+        info.numBytes = (int) infoDictionary.getInt("length");
         info.path = infoDictionary.getString("name");
         metaInfo.fileInfos.push_back(info);
     } else {
         metaInfo.directoryName = infoDictionary.getString("name");
 
         /* Parse files */
-        for (BencodedDictionary &fileInfo: infoDictionary.getDictionaryList("files")) {
+        const BList &list = infoDictionary.getList("files");
+        for (int i = 0; i < list.size(); ++i) {
+            const BDictionary &fileInfo = list.getDictionary(i);
             FileInfo info;
-            info.numBytes = fileInfo.getInt("length");
+            info.numBytes = (int) fileInfo.getInt("length");
             info.path = buildPath(infoDictionary);
             metaInfo.fileInfos.push_back(info);
         }
@@ -127,7 +128,9 @@ void Torrent::parseTorrentFile() {
 std::string Torrent::buildPath(const BDictionary &pathDictionary) const {
     std::string path;
 
-    for (std::string &pathElement: pathDictionary.getStringList("path")) {
+    const BList &list = pathDictionary.getList("path");
+    for (int i = 0; i < list.size(); ++i) {
+        const std::string& pathElement = list.getString(i);
         path += pathElement + '/';
     }
     path.pop_back();

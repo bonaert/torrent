@@ -78,13 +78,13 @@ BList &BList::getList(int index) {
     return *list;
 }
 
-BDictionary & BList::getDictionary(int index) {
+BDictionary & BList::getDictionary(int index)const {
     BItem *type = items[index];
     BDictionary * dictionary = static_cast<BDictionary *>(type);
     return *dictionary;
 }
 
-int BList::size() {
+int BList::size()const {
     return (int) items.size();
 }
 
@@ -122,7 +122,7 @@ std::string BDictionary::getString(const std::string &key) const {
     return *string; // Implicit conversion from BString to std::string
 }
 
-BList &BDictionary::getList(const std::string &key) {
+BList & BDictionary::getList(const std::string &key)const {
     BItem* type = itemMap[key];
     BList * list = static_cast<BList *>(type);
     return *list;
@@ -136,6 +136,10 @@ BDictionary & BDictionary::getDictionary(const std::string &key) {
 
 int BDictionary::size() {
     return (int) itemMap.size();
+}
+
+void BDictionary::keys() {
+    return itemMap.
 }
 
 

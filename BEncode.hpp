@@ -9,8 +9,13 @@
 using intType = int64_t;
 
 // Root class
-class BItem {
-};
+class BItem {};
+class BInteger;
+class BString;
+class BList;
+class BDictionary;
+
+
 
 
 // Integer
@@ -50,9 +55,9 @@ public:
 
     BList &getList(int index);
 
-    BDictionary &getDictionary(int index);
+    BDictionary & getDictionary(int index)const;
 
-    int size();
+    int size()const;
 };
 
 
@@ -68,11 +73,13 @@ public:
 
     intType getInt(const std::string &key) const;
 
-    BList &getList(const std::string &key);
+    BList & getList(const std::string &key)const;
 
     BDictionary &getDictionary(const std::string &key);
 
     int size();
+
+    void keys();
 };
 
 
