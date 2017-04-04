@@ -46,7 +46,7 @@ typedef struct Peer {
 
 class TrackerResponse {
 private:
-    void parseResponse(const BEncodedDictionary &response);
+    void parseResponse(const BDictionary &response);
 public:
     bool failed;
     std::string failureReason;
@@ -63,7 +63,7 @@ public:
 
 
     TrackerResponse(const std::string &response);
-    TrackerResponse(const BEncodedDictionary &response);
+    TrackerResponse(const BDictionary &response);
 };
 
 

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "BEncode.hpp"
 
 const int HASH_SIZE = 20;
 
@@ -21,7 +22,7 @@ typedef struct MetaInfo {
 
     // Info dictionary
     char infoDictHash[HASH_SIZE];
-    int pieceLength;
+    intType pieceLength;
     int numPieces;
     char piecesHash[][HASH_SIZE];  // Array of 20 char hashes for each of the pieces
     bool isPrivate = false;
@@ -62,7 +63,7 @@ public:
 
     int numActivePeers();
 
-    std::string buildPath(const BEncodedDictionary &pathDictionary) const;
+    std::string buildPath(const BDictionary &pathDictionary) const;
 };
 
 

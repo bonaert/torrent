@@ -56,7 +56,7 @@ void Torrent::parseTorrentFile() {
     std::ifstream torrentFile;
     torrentFile.open(torrentFileName);
 
-    BEncodedDictionary metaInfoDict(torrentFile);
+    BDictionary metaInfoDict(torrentFile);
 
     /* Parse the meta info fields */
     metaInfo.announceURL = metaInfoDict.getString("annouce");
@@ -74,17 +74,17 @@ void Torrent::parseTorrentFile() {
     }
 
     if (metaInfoDict.contains("encoding")) {
-        metaInfo.encoding = metaInfoDict.gettString("encoding");
+        metaInfo.encoding = metaInfoDict.getString("encoding");
     }
 
 
     /* Parse the info dictionary */
-    const BEncodedDictionary &infoDictionary = metaInfoDict.getDictionary("info");
+    const BDictionary &infoDictionary = metaInfoDict.getDictionary("info");
 
     metaInfo.infoDictHash = hash(infoDictionary.getUnderlyingString());
     metaInfo.pieceLength = infoDictionary.getInt("piece length");
     if (infoDictionary.contains("private")) {
-        metaInfo.isPrivate = infoDictionary.getBool("private");
+        metaInfo.isPrivate = (infoDictionary.getInt("private") == 1);
     }
 
     const std::string &hashes = infoDictionary.getString("pieces");
@@ -124,7 +124,7 @@ void Torrent::parseTorrentFile() {
 
 }
 
-std::string Torrent::buildPath(const BEncodedDictionary &pathDictionary) const {
+std::string Torrent::buildPath(const BDictionary &pathDictionary) const {
     std::string path;
 
     for (std::string &pathElement: pathDictionary.getStringList("path")) {

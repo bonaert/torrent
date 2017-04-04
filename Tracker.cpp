@@ -150,11 +150,11 @@ const std::string &TrackerRequest::getRequestURL() {
 TrackerResponse::TrackerResponse(const std::string &response): TrackerRequest(decode(response)) {
 }
 
-TrackerResponse::TrackerResponse(const BEncodedDictionary &response) {
+TrackerResponse::TrackerResponse(const BDictionary &response) {
     parseResponse(response);
 }
 
-void TrackerResponse::parseResponse(const BEncodedDictionary & response) {
+void TrackerResponse::parseResponse(const BDictionary & response) {
     if (response.contains("failure reason")){
         failed = true;
         failureReason = response.getString("failure reason");
@@ -186,7 +186,7 @@ void TrackerResponse::parseResponse(const BEncodedDictionary & response) {
     // https://wiki.theory.org/BitTorrentSpecification#Tracker_Response
     // Currently we're assuming we'll only receive the dictionary model of peers
 
-    for (const BEncodedDictionary& peerDict: response.getDictionaryList("")) {
+    for (const BDictionary& peerDict: response.getDictionaryList("")) {
         Peer peer;
         peer.peerID = peerDict.getString("peer id");
         peer.ip = peerDict.getString("ip");
