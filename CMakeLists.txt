@@ -8,7 +8,10 @@ set(SOURCE_FILES main.cpp
         Tracker.cpp Tracker.hpp
         Peer.cpp Peer.hpp
         Tools.cpp Tools.hpp
-        # Client.cpp Client.hpp
-        BEncode.cpp BEncode.hpp)
+        BEncode.cpp BEncode.hpp
+
+        Client.cpp Client.hpp
+
+        )
 
 add_executable(torrent ${SOURCE_FILES})

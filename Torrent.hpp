@@ -10,7 +10,7 @@ const int HASH_SIZE = 20;
 typedef struct FileInfo {
     int numBytes;
     std::string path;
-} FileInfo ;
+} FileInfo;
 
 typedef struct MetaInfo {
     // Top level info
@@ -21,7 +21,11 @@ typedef struct MetaInfo {
     std::string encoding = "";
 
     // Info dictionary
-    char infoDictHash[HASH_SIZE];
+    char infoDictHash[HASH_SIZE] = {'1', '1', '1', '1', '1',
+                                    '1', '1', '1', '1', '1',
+                                    '1', '1', '1', '1', '1',
+                                    '1', '1', '1', '1', '1'
+    };
     intType pieceLength;
     int numPieces;
     char **piecesHash;  // Array of 20 char hashes for each of the pieces
@@ -41,7 +45,6 @@ private:
 public:
     std::string torrentFileName;
     MetaInfo metaInfo;
-
 
 
     Torrent(std::string torrentFileName);

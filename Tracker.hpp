@@ -4,7 +4,7 @@
 #include <string>
 #include "Torrent.hpp"
 
-const std::vector<std::string> ACCEPTED_EVENTS = {"started", "completed", "stopped"};
+const std::vector<std::string> ACCEPTED_EVENTS = {"", "started", "completed", "stopped"};
 
 class TrackerRequest {
 private:
@@ -34,8 +34,6 @@ public:
     TrackerRequest& addKey(const std::string& key);
     TrackerRequest& addTrackerID(const std::string& trackerID);
     const std::string& getRequestURL();
-
-    std::string urlencode(const std::string &basic_string);
 };
 
 typedef struct Peer {
@@ -66,5 +64,6 @@ public:
     TrackerResponse(const BDictionary &response);
 };
 
+TrackerResponse *buildTrackerResponse(const std::string &response);
 
 #endif //TORRENT_TRACKER_HPP

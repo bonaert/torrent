@@ -26,7 +26,9 @@ class Client {
 
 
 public:
-    Client(std::string filename);
+    Client(std::string &filename);
+
+    Client(Torrent &torrent);
 
     /* Trackers communication */
     void sendGetPeersRequestToTracker(const std::string &event);

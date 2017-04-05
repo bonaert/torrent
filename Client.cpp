@@ -1,10 +1,18 @@
 #include <iostream>
 #include "Client.hpp"
 
-Client::Client(std::string filename) : torrent(filename),
-                                       peerID(buildPeerID()),
-                                       port(DEFAULT_PORT)
+Client::Client(std::string &filename) : torrent(filename),
+                                        peerID(buildPeerID()),
+                                        port(DEFAULT_PORT)
 {
+    numBytesUploaded = 0;
+    numBytesDownloaded = 0;
+    numBytesLeft = torrent.size();
+}
+
+Client::Client(Torrent &torrent) : torrent(torrent),
+                                   peerID(buildPeerID()),
+                                   port(DEFAULT_PORT) {
     numBytesUploaded = 0;
     numBytesDownloaded = 0;
     numBytesLeft = torrent.size();
@@ -32,9 +40,9 @@ void Client::sendGetPeersRequestToTracker(const std::string &event) {
 
 void Client::processGetPeersResponseFromTracker(const std::string &response) {
     if (latestTrackerResponse == nullptr) {
-        latestTrackerResponse = new TrackerResponse(response);
+        latestTrackerResponse = buildTrackerResponse(response);
     } else {
-        *latestTrackerResponse = TrackerResponse(response);
+        *latestTrackerResponse = *buildTrackerResponse(response);
     }
 
 

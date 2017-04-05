@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "Torrent.hpp"
 #include "Tools.hpp"
+#include "Client.hpp"
 
 /*
  * The following examples methods demonstrate how the API should be used.
@@ -18,6 +19,8 @@ void downloadTorrent(std::string filename) {
     std::string name = torrent.name();
 
 
+    Client client(torrent);
+    client.sendGetPeersRequestToTracker();
 /*
     Client client(torrent);
     client.start(); // Starts the torrent in a new thread [NOT SURE, MAY CHANGE]

@@ -59,13 +59,13 @@ void TrackerRequest::addUrlEncodedKeyValuePairInRequest(const std::string &key, 
 
 TrackerRequest &TrackerRequest::addInfoHash(const std::string& infoHash) {
     assert(infoHash.length() == HASH_SIZE);
-    addKeyValuePairInRequest("info_hash", infoHash);
+    addUrlEncodedKeyValuePairInRequest("info_hash", infoHash);
     return *this;
 }
 
 TrackerRequest &TrackerRequest::addPeerID(const std::string &peerID) {
     assert(peerID.length() == HASH_SIZE);
-    addKeyValuePairInRequest("peer_id", peerID);
+    addUrlEncodedKeyValuePairInRequest("peer_id", peerID);
     return *this;
 }
 
@@ -133,10 +133,6 @@ const std::string &TrackerRequest::getRequestURL() {
     return requestString;
 }
 
-std::string TrackerRequest::urlencode(const std::string &basic_string) {
-    return "";
-}
-
 
 /*
  *
@@ -145,11 +141,11 @@ std::string TrackerRequest::urlencode(const std::string &basic_string) {
  */
 
 
-TrackerResponse buildTrackerResponse(std::string &response) {
+TrackerResponse *buildTrackerResponse(const std::string &response) {
     std::istringstream stream(response);
 
     BDictionary *responseDict = static_cast<BDictionary *>(parseBItem(stream));
-    TrackerResponse trackerResponse(*responseDict);
+    TrackerResponse *trackerResponse = new TrackerResponse(*responseDict);
     delete responseDict;
 
     return trackerResponse;
