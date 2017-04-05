@@ -6,11 +6,12 @@ set(CMAKE_CXX_STANDARD 11)
 set(SOURCE_FILES main.cpp
         Torrent.cpp Torrent.hpp
         Tracker.cpp Tracker.hpp
-        Peer.cpp Peer.hpp
-        Tools.cpp Tools.hpp
-        BEncode.cpp BEncode.hpp
-
         Client.cpp Client.hpp
+        Peer.cpp Peer.hpp
+
+        BEncode.cpp BEncode.hpp
+        Utils/Tools.cpp Utils/Tools.hpp
+        Utils/Networking.cpp Utils/Networking.hpp
 
         )
 

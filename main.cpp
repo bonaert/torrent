@@ -2,7 +2,7 @@
 #include <iostream>
 #include <assert.h>
 #include "Torrent.hpp"
-#include "Tools.hpp"
+#include "Utils/Tools.hpp"
 #include "Client.hpp"
 
 /*
