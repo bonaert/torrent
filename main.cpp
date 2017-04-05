@@ -53,7 +53,7 @@ void runTests() {
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
-    const char *filename = "/home/greg/Downloads/torrents/Total.Recall.by.Arnold.Schwarzenegger.torrent";
+    const char *filename = "/home/greg/Downloads/torrents/Austin.Powers.-.The.Spy.Who.Shagged.Me.(1999).torrent";
     downloadTorrent(filename);
 
     runTests();

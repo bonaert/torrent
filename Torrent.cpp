@@ -1,4 +1,4 @@
-#include <assert.h>
+
 #include "Torrent.hpp"
 
 Torrent::Torrent(std::string torrentFileName) : torrentFileName(torrentFileName) {
@@ -59,6 +59,14 @@ void Torrent::parseTorrentFile() {
     /* Parse the meta info fields */
     metaInfo.announceURL = metaInfoDict.getString("announce");
 
+    BList announceURLsList = metaInfoDict.getList("announce-list");
+    for (int j = 0; j < announceURLsList.size(); ++j) {
+        BList announceURLlist = announceURLsList.getList(j);
+        std::string announceURL = announceURLlist.getString(0);
+        metaInfo.announceList.push_back(announceURL);
+//        announceURLList
+    }
+
     if (metaInfoDict.contains("creation date")) {
         metaInfo.creationDate = (int) metaInfoDict.getInt("creation date");
     }
@@ -99,7 +107,6 @@ void Torrent::parseTorrentFile() {
         for (int i = 0; i < HASH_SIZE; ++i) {
             metaInfo.piecesHash[hashNum][i] = hashes[hashNum * HASH_SIZE + i];
         }
-        assert(metaInfo.piecesHash[0][0] == '&');
     }
 
 

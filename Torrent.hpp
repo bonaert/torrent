@@ -15,6 +15,7 @@ typedef struct FileInfo {
 typedef struct MetaInfo {
     // Top level info
     std::string announceURL;
+    std::vector<std::string> announceList;
     int creationDate = -1;
     std::string comment = "";
     std::string createdBy = "";

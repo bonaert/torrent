@@ -44,6 +44,8 @@ public:
     void sendRequest(std::string basic_string);
 
     void updatePeers();
+
+    void sendGetPeersRequestToTracker(const std::string &announce, const std::string &event);
 };
 
 

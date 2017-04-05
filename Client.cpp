@@ -3,6 +3,11 @@
 #include <curl/curl.h>
 
 
+/*
+ * http://www.bittorrent.org/beps/bep_0015.html
+ */
+
+
 Client::Client(std::string &filename) : torrent(filename),
                                         peerID(buildPeerID()),
                                         port(DEFAULT_PORT) {
@@ -24,7 +29,15 @@ void Client::sendGetPeersRequestToTracker() {
 }
 
 void Client::sendGetPeersRequestToTracker(const std::string &event) {
-    TrackerRequest request(torrent.metaInfo.announceURL);
+    for (std::string &annouceUrl : torrent.metaInfo.announceList) {
+        sendGetPeersRequestToTracker(annouceUrl, event);
+    }
+}
+
+void Client::sendGetPeersRequestToTracker(const std::string &announce, const std::string &event) {
+//    std::string protocolLessURL = announce.substr(6, announce.size() - 6);
+
+    TrackerRequest request(announce);
     std::string requestMessage = request
             .addInfoHash(torrent.metaInfo.infoDictHash)
             .addPeerID(peerID)
@@ -108,6 +121,7 @@ void Client::sendRequest(std::string url) {
     curl = curl_easy_init();
     if (curl) {
         curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_LOCALPORT, 6881);
 
         /* Perform the request, res will get the return code */
         res = curl_easy_perform(curl);
