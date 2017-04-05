@@ -1,11 +1,7 @@
 #include <assert.h>
-#include <algorithm>
+#include <sstream>
 #include "Tracker.hpp"
-
-
-bool contains(const std::vector<std::string>& vector, const std::string& element){
-    return std::find(vector.begin(), vector.end(), element) != vector.end();
-}
+#include "Tools.hpp"
 
 
 /*
@@ -149,8 +145,14 @@ std::string TrackerRequest::urlencode(const std::string &basic_string) {
  */
 
 
+TrackerResponse buildTrackerResponse(std::string &response) {
+    std::istringstream stream(response);
 
-TrackerResponse::TrackerResponse(const std::string &response) : TrackerResponse(parseBItem(response)) {
+    BDictionary *responseDict = static_cast<BDictionary *>(parseBItem(stream));
+    TrackerResponse trackerResponse(*responseDict);
+    delete responseDict;
+
+    return trackerResponse;
 }
 
 TrackerResponse::TrackerResponse(const BDictionary &response) {
@@ -199,8 +201,4 @@ void TrackerResponse::parseResponse(const BDictionary & response) {
         peer.port = peerDict.getInt("port");
         peers.push_back(peer);
     }
-}
-
-void TrackerResponse::urldecode(const std::string &basic_string) {
-
 }

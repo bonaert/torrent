@@ -63,10 +63,7 @@ public:
 
 
 
-    TrackerResponse(const std::string &response);
     TrackerResponse(const BDictionary &response);
-
-    void urldecode(const std::string &basic_string);
 };
 
 

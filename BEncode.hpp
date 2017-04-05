@@ -15,7 +15,7 @@ class BString;
 class BList;
 class BDictionary;
 
-BItem *parseBItem(std::ifstream &file);
+BItem *parseBItem(std::istream &stream);
 
 
 // Integer
@@ -24,7 +24,8 @@ private:
     intType value;
 public:
     BInteger(int number) : value(number) {};
-    BInteger(std::ifstream& file);
+
+    BInteger(std::istream &stream);
 
     operator intType() { return value; } // Conversion to underlying value
 };
@@ -36,7 +37,8 @@ private:
     std::string string;
 public:
     BString(const std::string string) : string(string) {};
-    BString(std::ifstream& file);
+
+    BString(std::istream &stream);
 
     operator std::string &() { return string; }
 };
@@ -47,7 +49,7 @@ class BList : public BItem {
 private:
     std::vector<BItem *> items;
 public:
-    BList(std::ifstream &stream);
+    BList(std::istream &stream);
 
     std::string getString(int index) const;
 
@@ -65,7 +67,7 @@ public:
 class BDictionary : public BItem {
     std::map<std::string, BItem *> itemMap;
 public:
-    BDictionary(std::ifstream &stream);
+    BDictionary(std::istream &stream);
 
     bool contains(const std::string &key) const;
 
@@ -86,7 +88,8 @@ public:
  */
 
 bool isDigit(int character);
-int readInt(std::ifstream& file);
+
+int readInt(std::istream &stream);
 
 
 #endif //TORRENT_BENCODE_HPP

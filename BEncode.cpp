@@ -6,23 +6,23 @@
  * INTEGER
  */
 
-BInteger::BInteger(std::ifstream &file) {
-    assert(file.get() == 'i');
+BInteger::BInteger(std::istream &stream) {
+    assert(stream.get() == 'i');
 
     bool isNegative = false;
-    if (file.peek() == '-') {
+    if (stream.peek() == '-') {
         isNegative = true;
-        file.get();
+        stream.get();
     }
 
     value = 0;
-    while (file.peek() != 'e') {
-        int character = file.get();
+    while (stream.peek() != 'e') {
+        int character = stream.get();
         value *= 10;
         value += (character - '0');
     }
 
-    assert(file.get() == 'e');
+    assert(stream.get() == 'e');
     if (isNegative) {
         value = -value;
     }
@@ -36,14 +36,14 @@ BInteger::BInteger(std::ifstream &file) {
  * STRING
  */
 
-BString::BString(std::ifstream &file) {
-    int length = readInt(file); // Reads the size
-    int i = file.get();
+BString::BString(std::istream &stream) {
+    int length = readInt(stream); // Reads the size
+    int i = stream.get();
     assert(i == ':');  // Reads the separator
 
 
     char buffer[length];
-    file.read(buffer, length);
+    stream.read(buffer, length);
     string = std::string(buffer, (unsigned long) length);
 }
 
@@ -53,7 +53,7 @@ BString::BString(std::ifstream &file) {
  * LIST
  */
 
-BList::BList(std::ifstream &stream) {
+BList::BList(std::istream &stream) {
     assert(stream.get() == 'l');
 
     while (stream.peek() != 'e'){
@@ -98,7 +98,7 @@ int BList::size()const {
  * DICTIONARY
  */
 
-BDictionary::BDictionary(std::ifstream& stream) {
+BDictionary::BDictionary(std::istream &stream) {
     assert(stream.get() == 'd');
 
     while (stream.peek() != 'e'){
@@ -149,15 +149,15 @@ int BDictionary::size() {
  * Parsing functions
  */
 
-BItem *parseBItem(std::ifstream &file) {
-    if (file.peek() == 'i') {
-        return new BInteger(file);
-    } else if (file.peek() == 'd') {
-        return new BDictionary(file);
-    } else if (file.peek() == 'l') {
-        return new BList(file);
+BItem *parseBItem(std::istream &stream) {
+    if (stream.peek() == 'i') {
+        return new BInteger(stream);
+    } else if (stream.peek() == 'd') {
+        return new BDictionary(stream);
+    } else if (stream.peek() == 'l') {
+        return new BList(stream);
     } else {
-        return new BString(file);
+        return new BString(stream);
     }
 }
 
@@ -166,10 +166,10 @@ bool isDigit(int character) {
     return '0' <= character && character <= '9';
 }
 
-int readInt(std::ifstream& file) {
+int readInt(std::istream &stream) {
     int res = 0;
-    while (isDigit(file.peek())) {
-        int character = file.get();
+    while (isDigit(stream.peek())) {
+        int character = stream.get();
         res *= 10;
         res += (character - '0');
     }
