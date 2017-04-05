@@ -24,8 +24,9 @@ typedef struct MetaInfo {
     char infoDictHash[HASH_SIZE];
     intType pieceLength;
     int numPieces;
-    char piecesHash[][HASH_SIZE];  // Array of 20 char hashes for each of the pieces
+    char **piecesHash;  // Array of 20 char hashes for each of the pieces
     bool isPrivate = false;
+    int totalSize = 0;
 
     // File information
     std::string directoryName;
@@ -49,7 +50,7 @@ public:
 
     int numPieces();
 
-    int pieceSize();
+    int pieceLength();
 
     std::string name();
 

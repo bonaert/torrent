@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "Torrent.hpp"
 
 Torrent::Torrent(std::string torrentFileName) : torrentFileName(torrentFileName) {
@@ -5,15 +6,15 @@ Torrent::Torrent(std::string torrentFileName) : torrentFileName(torrentFileName)
 }
 
 int Torrent::size() {
-    return 0;
+    return metaInfo.totalSize;
 }
 
 int Torrent::numPieces() {
-    return 0;
+    return metaInfo.numPieces;
 }
 
-int Torrent::pieceSize() {
-    return 0;
+int Torrent::pieceLength() {
+    return (int) metaInfo.pieceLength;
 }
 
 void Torrent::start() {
@@ -37,10 +38,8 @@ int Torrent::bytesDownloaded() {
 }
 
 std::string Torrent::name() {
-    return "";
+    return metaInfo.directoryName;
 }
-
-
 
 
 /*
@@ -58,7 +57,7 @@ void Torrent::parseTorrentFile() {
     BDictionary metaInfoDict(torrentFile);
 
     /* Parse the meta info fields */
-    metaInfo.announceURL = metaInfoDict.getString("annouce");
+    metaInfo.announceURL = metaInfoDict.getString("announce");
 
     if (metaInfoDict.contains("creation date")) {
         metaInfo.creationDate = (int) metaInfoDict.getInt("creation date");
@@ -80,7 +79,11 @@ void Torrent::parseTorrentFile() {
     /* Parse the info dictionary */
     const BDictionary &infoDictionary = metaInfoDict.getDictionary("info");
 
-    metaInfo.infoDictHash = hash(infoDictionary.getUnderlyingString());
+
+    // TODO
+    // metaInfo.infoDictHash = hash(infoDictionary.getUnderlyingString());
+
+
     metaInfo.pieceLength = infoDictionary.getInt("piece length");
     if (infoDictionary.contains("private")) {
         metaInfo.isPrivate = (infoDictionary.getInt("private") == 1);
@@ -90,11 +93,13 @@ void Torrent::parseTorrentFile() {
     metaInfo.numPieces = (int) (hashes.length() / HASH_SIZE);
 
     /* Parse the hashes */
-    metaInfo.piecesHash = (char[metaInfo.numPieces][HASH_SIZE]) malloc(metaInfo.numPieces * sizeof(char[HASH_SIZE]));
+    metaInfo.piecesHash = (char **) malloc(metaInfo.numPieces * sizeof(char *));
     for (int hashNum = 0; hashNum < metaInfo.numPieces; hashNum++) {
+        metaInfo.piecesHash[hashNum] = (char *) malloc(HASH_SIZE * sizeof(char *));
         for (int i = 0; i < HASH_SIZE; ++i) {
             metaInfo.piecesHash[hashNum][i] = hashes[hashNum * HASH_SIZE + i];
         }
+        assert(metaInfo.piecesHash[0][0] == '&');
     }
 
 
@@ -108,6 +113,7 @@ void Torrent::parseTorrentFile() {
         info.numBytes = (int) infoDictionary.getInt("length");
         info.path = infoDictionary.getString("name");
         metaInfo.fileInfos.push_back(info);
+        metaInfo.totalSize += info.numBytes;
     } else {
         metaInfo.directoryName = infoDictionary.getString("name");
 
@@ -117,8 +123,9 @@ void Torrent::parseTorrentFile() {
             const BDictionary &fileInfo = list.getDictionary(i);
             FileInfo info;
             info.numBytes = (int) fileInfo.getInt("length");
-            info.path = buildPath(infoDictionary);
+            info.path = buildPath(fileInfo);
             metaInfo.fileInfos.push_back(info);
+            metaInfo.totalSize += info.numBytes;
         }
     }
 

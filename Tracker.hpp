@@ -34,6 +34,8 @@ public:
     TrackerRequest& addKey(const std::string& key);
     TrackerRequest& addTrackerID(const std::string& trackerID);
     const std::string& getRequestURL();
+
+    std::string urlencode(const std::string &basic_string);
 };
 
 typedef struct Peer {
@@ -63,6 +65,8 @@ public:
 
     TrackerResponse(const std::string &response);
     TrackerResponse(const BDictionary &response);
+
+    void urldecode(const std::string &basic_string);
 };
 
 

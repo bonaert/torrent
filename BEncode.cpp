@@ -16,15 +16,17 @@ BInteger::BInteger(std::ifstream &file) {
     }
 
     value = 0;
-    while (file.peek()) {
+    while (file.peek() != 'e') {
         int character = file.get();
         value *= 10;
         value += (character - '0');
     }
 
+    assert(file.get() == 'e');
     if (isNegative) {
         value = -value;
     }
+
 }
 
 
@@ -36,10 +38,13 @@ BInteger::BInteger(std::ifstream &file) {
 
 BString::BString(std::ifstream &file) {
     int length = readInt(file); // Reads the size
-    assert(file.get() == ':');  // Reads the separator
+    int i = file.get();
+    assert(i == ':');  // Reads the separator
 
-    string.reserve((unsigned long) length);
-    file.read((char *) string.c_str(), length);
+
+    char buffer[length];
+    file.read(buffer, length);
+    string = std::string(buffer, (unsigned long) length);
 }
 
 
@@ -111,25 +116,25 @@ bool BDictionary::contains(const std::string &key) const {
 }
 
 intType BDictionary::getInt(const std::string &key) const {
-    BItem *type = itemMap[key];
+    BItem *type = itemMap.at(key);
     BInteger *integer = static_cast<BInteger *>(type);
     return *integer; // Implicit conversion from BInteger to intType
 }
 
 std::string BDictionary::getString(const std::string &key) const {
-    BItem* type = itemMap[key];
+    BItem *type = itemMap.at(key);
     BString * string = static_cast<BString *>(type);
     return *string; // Implicit conversion from BString to std::string
 }
 
 BList & BDictionary::getList(const std::string &key)const {
-    BItem* type = itemMap[key];
+    BItem *type = itemMap.at(key);
     BList * list = static_cast<BList *>(type);
     return *list;
 }
 
 BDictionary & BDictionary::getDictionary(const std::string &key) {
-    BItem* type = itemMap[key];
+    BItem *type = itemMap.at(key);
     BDictionary * dictionary = static_cast<BDictionary *>(type);
     return *dictionary;
 }
@@ -138,16 +143,13 @@ int BDictionary::size() {
     return (int) itemMap.size();
 }
 
-void BDictionary::keys() {
-    return itemMap.
-}
 
 
 /*
  * Parsing functions
  */
 
-BItem * parseBItem(std::ifstream file) {
+BItem *parseBItem(std::ifstream &file) {
     if (file.peek() == 'i') {
         return new BInteger(file);
     } else if (file.peek() == 'd') {

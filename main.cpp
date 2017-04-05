@@ -1,7 +1,6 @@
-#include <unistd.h>
+
 #include <iostream>
 #include "Torrent.hpp"
-#include "Client.hpp"
 
 /*
  * The following examples methods demonstrate how the API should be used.
@@ -13,11 +12,11 @@ void downloadTorrent(std::string filename) {
     Torrent torrent = Torrent(filename);
     int totalSize = torrent.size();
     int numPieces = torrent.numPieces();
-    int pieceSize = torrent.pieceSize();
+    int pieceSize = torrent.pieceLength();
     std::string name = torrent.name();
 
 
-
+/*
     Client client(torrent);
     client.start(); // Starts the torrent in a new thread [NOT SURE, MAY CHANGE]
 
@@ -35,6 +34,7 @@ void downloadTorrent(std::string filename) {
 
         sleep(10);
     }
+*/
 
     std::cout << "The torrent is now complete!" << std::endl;
     std::cout << "You can check your file at " << name << std::endl;
@@ -42,6 +42,7 @@ void downloadTorrent(std::string filename) {
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
-    downloadTorrent("file.torrent");
+    const char *filename = "/home/greg/Downloads/torrents/Total.Recall.by.Arnold.Schwarzenegger.torrent";
+    downloadTorrent(filename);
     return 0;
 }

@@ -137,6 +137,9 @@ const std::string &TrackerRequest::getRequestURL() {
     return requestString;
 }
 
+std::string TrackerRequest::urlencode(const std::string &basic_string) {
+    return "";
+}
 
 
 /*
@@ -147,7 +150,7 @@ const std::string &TrackerRequest::getRequestURL() {
 
 
 
-TrackerResponse::TrackerResponse(const std::string &response): TrackerRequest(decode(response)) {
+TrackerResponse::TrackerResponse(const std::string &response) : TrackerResponse(parseBItem(response)) {
 }
 
 TrackerResponse::TrackerResponse(const BDictionary &response) {
@@ -196,4 +199,8 @@ void TrackerResponse::parseResponse(const BDictionary & response) {
         peer.port = peerDict.getInt("port");
         peers.push_back(peer);
     }
+}
+
+void TrackerResponse::urldecode(const std::string &basic_string) {
+
 }

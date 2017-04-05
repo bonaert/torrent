@@ -15,7 +15,7 @@ class BString;
 class BList;
 class BDictionary;
 
-
+BItem *parseBItem(std::ifstream &file);
 
 
 // Integer
@@ -78,15 +78,7 @@ public:
     BDictionary &getDictionary(const std::string &key);
 
     int size();
-
-    void keys();
 };
-
-
-
-BItem * parseBItem(std::ifstream file);
-
-
 
 
 /*
