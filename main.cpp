@@ -1,6 +1,8 @@
 
 #include <iostream>
+#include <assert.h>
 #include "Torrent.hpp"
+#include "Tools.hpp"
 
 /*
  * The following examples methods demonstrate how the API should be used.
@@ -40,9 +42,18 @@ void downloadTorrent(std::string filename) {
     std::cout << "You can check your file at " << name << std::endl;
 }
 
+void runTests() {
+    assert(urlencode("Hello Günter") == "Hello%20G%C3%BCnter");
+    assert(urldecode("Hello%20G%C3%BCnter") == "Hello Günter");
+}
+
+
 int main() {
     std::cout << "Hello, World!" << std::endl;
     const char *filename = "/home/greg/Downloads/torrents/Total.Recall.by.Arnold.Schwarzenegger.torrent";
     downloadTorrent(filename);
+
+    runTests();
+
     return 0;
 }
