@@ -1,10 +1,11 @@
 #include <iostream>
 #include "Client.hpp"
+#include <curl/curl.h>
+
 
 Client::Client(std::string &filename) : torrent(filename),
                                         peerID(buildPeerID()),
-                                        port(DEFAULT_PORT)
-{
+                                        port(DEFAULT_PORT) {
     numBytesUploaded = 0;
     numBytesDownloaded = 0;
     numBytesLeft = torrent.size();
@@ -53,7 +54,7 @@ void Client::processGetPeersResponseFromTracker(const std::string &response) {
         return;
     }
 
-    if (latestTrackerResponse->warning.length() != 0){
+    if (latestTrackerResponse->warning.length() != 0) {
         std::cout << "The tracker sent the following warning:" << std::endl;
         std::cout << latestTrackerResponse->warning << std::endl;
     }
@@ -61,7 +62,7 @@ void Client::processGetPeersResponseFromTracker(const std::string &response) {
 
 
     /* Process response */
-    if (latestTrackerResponse->trackerID.size() != 0){
+    if (latestTrackerResponse->trackerID.size() != 0) {
         trackerID = latestTrackerResponse->trackerID; // Update the tracker ID
     }
 
@@ -75,7 +76,7 @@ void Client::updatePeers() {
     // This could be done easily by using a set, and implementing a comparison
     // operation on the peers that only compares their peer ID
 
-    for (const Peer& peer : latestTrackerResponse->peers) {
+    for (const Peer &peer : latestTrackerResponse->peers) {
         peers.push_back(peer);
     }
 }
@@ -95,13 +96,30 @@ std::string Client::buildPeerID() {
 }
 
 
-
 /*
  * NETWORKING
  */
 
-void Client::sendRequest(std::string message) {
 
+void Client::sendRequest(std::string url) {
+    CURL *curl;
+    CURLcode res;
+
+    curl = curl_easy_init();
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+
+        /* Perform the request, res will get the return code */
+        res = curl_easy_perform(curl);
+
+        /* Check for errors */
+        if (res != CURLE_OK) {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        }
+
+        /* always cleanup */
+        curl_easy_cleanup(curl);
+    }
 }
 
 
