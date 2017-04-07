@@ -2,7 +2,7 @@
 #define TORRENT_TRACKERMASTER_HPP
 
 
-#include "Tracker.hpp"
+#include "UDPTracker.hpp"
 
 class Client;
 

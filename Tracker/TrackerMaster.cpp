@@ -11,6 +11,6 @@ void TrackerMaster::addTracker(const std::string &announceUrl) {
 
 void TrackerMaster::getPeers() {
     for (auto &&tracker : trackers) {
-        tracker.getPeers();
+        tracker.updatePeers();
     }
 }

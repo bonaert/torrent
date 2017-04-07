@@ -3,9 +3,9 @@
 
 #include <string>
 #include "Torrent.hpp"
-#include "Tracker.hpp"
+#include "Tracker/UDPTracker.hpp"
 #include "Utils/UDPCommunicator.hpp"
-#include "TrackerMaster.hpp"
+#include "Tracker/TrackerMaster.hpp"
 
 const int DEFAULT_PORT = 6881;
 
