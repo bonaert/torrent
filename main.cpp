@@ -20,7 +20,7 @@ void downloadTorrent(std::string filename) {
 
 
     Client client(torrent);
-    client.sendGetPeersRequestToTracker();
+    client.sendGetPeersUDPRequestToTracker();
 /*
     Client client(torrent);
     client.start(); // Starts the torrent in a new thread [NOT SURE, MAY CHANGE]
@@ -50,10 +50,16 @@ void runTests() {
     assert(urldecode("Hello%20G%C3%BCnter") == "Hello Günter");
 }
 
+void setup() {
+    srand((unsigned int) time(NULL));
+}
+
 
 int main() {
+    setup();
     std::cout << "Hello, World!" << std::endl;
-    const char *filename = "/home/greg/Downloads/torrents/Austin.Powers.-.The.Spy.Who.Shagged.Me.(1999).torrent";
+//    const char *filename = "/home/greg/Downloads/torrents/[kat.cr]silicon.valley.s03e07.hdtv.x264.killers.ettv.torrent";
+    const char *filename = "/home/greg/Downloads/torrents/[kat.cr]shutter.island.2010.720p.1280.544.600mb.torrent";
     downloadTorrent(filename);
 
     runTests();

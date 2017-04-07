@@ -48,3 +48,69 @@ std::string urldecode(const std::string &string) {
 bool contains(const std::vector<std::string> &vector, const std::string &element) {
     return std::find(vector.begin(), vector.end(), element) != vector.end();
 }
+
+bool isDigit(int character) {
+    return '0' <= character && character <= '9';
+}
+
+int readInt(const std::string &string, int pos) {
+    int res = 0;
+    while (pos < string.size() && isDigit(string[pos])) {
+        int character = string[pos];
+        res *= 10;
+        res += (character - '0');
+        pos++;
+    }
+    return res;
+}
+
+
+void copyArray(char *source, char *destination, int numChars) {
+    for (int i = 0; i < numChars; ++i) {
+        destination[i] = source[i];
+    }
+}
+
+char *writeInt64(char *buffer, int64_t val) {
+    *((uint64_t *) buffer) = htobe64((uint64_t) val);
+    return buffer + 8;
+}
+
+char *writeInt32(char *buffer, int32_t val) {
+    *((uint32_t *) buffer) = htobe32((uint32_t) val);
+    return buffer + 4;
+}
+
+char *writeInt16(char *buffer, int16_t val) {
+    *((uint16_t *) buffer) = htobe16((uint32_t) val);
+    return buffer + 2;
+}
+
+char *writeInt8Array(char *buffer, int8_t *array, int size) {
+    for (int i = 0; i < size; ++i) {
+        buffer[i] = array[i]; // No need to convert to big endian since it's only 1 byte
+    }
+    return buffer + size;
+}
+
+
+int64_t readInt64AndAdvancePointer(char **bufferPointer) {
+    char *buffer = *bufferPointer;
+    uint64_t value = *((uint64_t *) buffer);
+    *bufferPointer += 8;
+    return (int64_t) be64toh(value);
+}
+
+int32_t readInt32AndAdvancePointer(char **bufferPointer) {
+    char *buffer = *bufferPointer;
+    uint32_t value = *((uint32_t *) buffer);
+    *bufferPointer += 4;
+    return (int32_t) be32toh(value);
+}
+
+int16_t readInt16AndAdvancePointer(char **bufferPointer) {
+    char *buffer = *bufferPointer;
+    uint16_t value = *((uint16_t *) buffer);
+    *bufferPointer += 2;
+    return (int16_t) be16toh(value);
+}

@@ -87,8 +87,6 @@ public:
  * Helper functions
  */
 
-bool isDigit(int character);
-
 int readInt(std::istream &stream);
 
 

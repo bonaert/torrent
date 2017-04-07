@@ -8,24 +8,41 @@
 #include <arpa/inet.h>
 #include <cstdlib>
 
-int init_connection_to_server(char *server_ip_address, int port);
+int initConnectionToServer(char *server_ip_address, int port);
 
-int create_socket();
+int createTCPSocket();
 
-int connect_to_server(int socket, int port, struct hostent *addr);
+int createUDPSocket(int sourcePort);
 
-int receive_data(int socket_fd, void *message, int length);
+int connectToServer(int socket, int port, struct hostent *addr);
 
-int get_data_from_socket(int socket_fd, char *buffer, int size);
+int receiveData(int socket_fd, void *message, int length);
 
-int get_message_length(int socket_fd);
+int getDataFromSocket(int socket_fd, char *buffer, int size);
 
-int receive_message(int socket_fd, char *buffer);
+int getMessageLength(int socket_fd);
 
-bool receive_message_with_timeout(int socket_fd, char *buffer, int timeout);
+int receiveMessage(int socket_fd, char *buffer);
 
-int send_data(int socket_fd, char *buffer, int length);
+bool receiveMessageWithTimeout(int socket_fd, char *buffer, int timeout);
 
-int send_message(int socket_fd, const char *message);
+int sendData(int socket_fd, char *buffer, int length);
+
+int sendMessage(int socket_fd, const char *message);
+
+void initAddress(struct sockaddr_in *address, int port, struct hostent *addr);
+
+sockaddr_in *buildAddress(const std::string &name, int port);
+
+
+/*
+ * UTILITIES
+ */
+
+int getPortFromUrl(const std::string &url);
+
+std::string getDomainFromUrl(const std::string &url);
+
+std::string getHumanReadableIP(uint32_t ip);
 
 #endif //PROJET_NETWORKING_H

@@ -1,5 +1,6 @@
 #include <assert.h>
 #include "BEncode.hpp"
+#include "Utils/Tools.hpp"
 
 
 /*
@@ -161,10 +162,6 @@ BItem *parseBItem(std::istream &stream) {
     }
 }
 
-
-bool isDigit(int character) {
-    return '0' <= character && character <= '9';
-}
 
 int readInt(std::istream &stream) {
     int res = 0;

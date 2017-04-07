@@ -4,17 +4,19 @@
 #include <string>
 #include "Torrent.hpp"
 #include "Tracker.hpp"
+#include "Utils/UDPCommunicator.hpp"
 
 const int DEFAULT_PORT = 6881;
 
+class PeerInfo;
+
 class Client {
     Torrent torrent;
-    std::string peerID;
-    int port;
+    int8_t peerID[20];
 
     /* Tracker information */
-    TrackerResponse * latestTrackerResponse;
-    std::string trackerID;
+//    TrackerResponse * latestTrackerResponse;
+//    std::string trackerID;
 
 
     int numBytesUploaded;
@@ -22,8 +24,10 @@ class Client {
     int numBytesLeft;
 
 
-    std::vector<Peer> peers;
+    std::vector<PeerInfo> peers;
 
+
+    void buildPeerID();
 
 public:
     Client(std::string &filename);
@@ -34,18 +38,36 @@ public:
     void sendGetPeersRequestToTracker(const std::string &event);
     void sendGetPeersRequestToTracker();
 
+    bool sendGetPeersUDPRequestToTracker(const std::string &event);
+
     void processGetPeersResponseFromTracker(const std::string& response);
 
 
 
 
-    std::string buildPeerID();
 
     void sendRequest(std::string basic_string);
 
     void updatePeers();
 
     void sendGetPeersRequestToTracker(const std::string &announce, const std::string &event);
+
+    void sendGetPeersUDPRequestToTracker();
+
+
+    const int8_t *getPeerID() const;
+
+    const int8_t *getInfoHash() const;
+
+    const std::string &getTrackerID() const;
+
+    int getNumBytesUploaded() const;
+
+    int getNumBytesDownloaded() const;
+
+    int getNumBytesLeft() const;
+
+    void addPeer(PeerInfo &peer);
 };
 
 

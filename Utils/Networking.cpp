@@ -1,9 +1,10 @@
 #include <iostream>
 #include "Networking.hpp"
+#include "Tools.hpp"
 
 // Receive
 
-int receive_data(int socket_fd, void *message, int length) {
+int receiveData(int socket_fd, void *message, int length) {
     int bytes_read = 0;
     int bytes_to_read = length;
     char *pointer = (char *) message;
@@ -21,8 +22,8 @@ int receive_data(int socket_fd, void *message, int length) {
     return bytes_read;
 }
 
-int get_data_from_socket(int socket_fd, char *buffer, int size) {
-    int errorCode = receive_data(socket_fd, buffer, size);
+int getDataFromSocket(int socket_fd, char *buffer, int size) {
+    int errorCode = receiveData(socket_fd, buffer, size);
     if (errorCode <= -1) {
         perror("Receive - message data");
         std::cout << "The size of the message is " << size << std::endl;
@@ -32,7 +33,7 @@ int get_data_from_socket(int socket_fd, char *buffer, int size) {
     return size;
 }
 
-int get_message_length(int socket_fd) {
+int getMessageLength(int socket_fd) {
     /*
      * Tries to get the length of the message
      * If can't read from the socket, throws an error
@@ -40,7 +41,7 @@ int get_message_length(int socket_fd) {
      * Otherwise, returns the length of the message
      * */
     size_t length = 0;
-    ssize_t length_bytes_read = receive_data(socket_fd, &length, sizeof(length));
+    ssize_t length_bytes_read = receiveData(socket_fd, &length, sizeof(length));
 
     if (length_bytes_read <= -1) {
         perror("receive_message - message length");
@@ -57,13 +58,13 @@ int get_message_length(int socket_fd) {
  * If the socket is closed, doesn't modify the buffer and returns -1.
  * Otherwise, puts the message in the buffer and return the length of the message.
  */
-int receive_message(int socket_fd, char *buffer) {
-    int length = get_message_length(socket_fd);  // Gets the length
+int receiveMessage(int socket_fd, char *buffer) {
+    int length = getMessageLength(socket_fd);  // Gets the length
     if (length == -1) { // Socket fermé
         return -1;
     }
 
-    return get_data_from_socket(socket_fd, buffer, length);  // Gets the data
+    return getDataFromSocket(socket_fd, buffer, length);  // Gets the data
 }
 
 /*
@@ -71,7 +72,7 @@ int receive_message(int socket_fd, char *buffer) {
  * Returns True if the read was succesful.
  * Returns False otherwise.
  */
-bool receive_message_with_timeout(int socket_fd, char *buffer, int timeout_val) {
+bool receiveMessageWithTimeout(int socket_fd, char *buffer, int timeout_val) {
     fd_set set;
     struct timeval timeout;
     FD_ZERO(&set);
@@ -84,7 +85,7 @@ bool receive_message_with_timeout(int socket_fd, char *buffer, int timeout_val) 
 
     int num_ready_descriptors = select(socket_fd + 1, &set, NULL, NULL, &timeout);
     if (num_ready_descriptors > 0) {  // There is a readable socket
-        int num_bytes_read = receive_message(socket_fd, buffer);
+        int num_bytes_read = receiveMessage(socket_fd, buffer);
 
         if (num_bytes_read > 0) {
             success = true;
@@ -95,7 +96,7 @@ bool receive_message_with_timeout(int socket_fd, char *buffer, int timeout_val) 
 
 // Send
 
-int send_data(int socket_fd, char *buffer, int length) {
+int sendData(int socket_fd, char *buffer, int length) {
     int bytes_sent = 0;
     int bytes_to_send = length;
     while (bytes_to_send > 0) {
@@ -112,22 +113,22 @@ int send_data(int socket_fd, char *buffer, int length) {
     return bytes_sent;
 }
 
-int send_message(int socket_fd, const char *message) {
+int sendMessage(int socket_fd, const char *message) {
     size_t length = strlen(message) + 1;
     //std::cout << "Sending message of size (including \\0) of " << length << " bytes" << std::endl;
     //std::cout << "Message: " << message << "to" << socket_fd <<  std::endl;
-    if (send_data(socket_fd, (char *) &length, sizeof(length)) <= -1) {
+    if (sendData(socket_fd, (char *) &length, sizeof(length)) <= -1) {
         perror("Send message - Message length");
         return -1;
     } // Send the length
-    if (send_data(socket_fd, (char *) message, (int) length) <= -1) {
+    if (sendData(socket_fd, (char *) message, (int) length) <= -1) {
         perror("Send message - Message data");
         return -1;
     } // Send the data
     return (int) length;
 }
 
-int init_connection_to_server(char *server_ip_address, int port) {
+int initConnectionToServer(char *server_ip_address, int port) {
     struct hostent *he;
     int serv_socket;
     if ((he = gethostbyname(server_ip_address)) == NULL) {
@@ -135,8 +136,8 @@ int init_connection_to_server(char *server_ip_address, int port) {
         exit(1);
     }
 
-    serv_socket = create_socket();
-    if (connect_to_server(serv_socket, port, he) <= -1) {
+    serv_socket = createTCPSocket();
+    if (connectToServer(serv_socket, port, he) <= -1) {
         const std::string &message = "The connect to the server with port "
                                      + std::to_string(port) + " has failed:";
         perror(message.c_str());
@@ -145,7 +146,12 @@ int init_connection_to_server(char *server_ip_address, int port) {
     return serv_socket;
 }
 
-int create_socket() {
+
+/*
+ * SOCKETS
+ */
+
+int createTCPSocket() {
     int sockfd;
 
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -154,20 +160,92 @@ int create_socket() {
     }
 
     return sockfd;
-
 }
+
+int createUDPSocket(int sourcePort) {
+    int socketFd;
+
+    if ((socketFd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+        perror("Couldn't create UDP socket");
+        exit(1);
+    }
+
+    struct sockaddr_in sourceAddress;
+    sourceAddress.sin_family = AF_INET;
+    sourceAddress.sin_addr.s_addr = htonl(INADDR_ANY);
+    sourceAddress.sin_port = htons(sourcePort);
+    bzero(&sourceAddress.sin_zero, 8);
+
+    if (bind(socketFd, (struct sockaddr *) &sourceAddress, sizeof(sourceAddress)) < 0) {
+        std::string errorMessage = "Couldn't bind to port " + sourcePort;
+        perror(errorMessage.c_str());
+        exit(1);
+    }
+
+    return socketFd;
+}
+
+
+void initAddress(struct sockaddr_in *address, int port, struct hostent *addr) {
+    address->sin_family = AF_INET;    // host byte order
+    address->sin_port = htons((uint16_t) port);  // short, network byte order
+    address->sin_addr = *((struct in_addr *) addr->h_addr);
+
+    bzero(&(address->sin_zero), 8);  // zero the rest of the struct
+}
+
+struct sockaddr_in *buildAddress(const std::string &name, int port) {
+    struct hostent *host = gethostbyname(name.c_str());
+    if (host == nullptr) {
+        std::string string = "Couldn't find host '" + name + "'";
+        herror(string.c_str());
+        return nullptr;
+    }
+
+    struct sockaddr_in *address = new sockaddr_in;
+    initAddress(address, port, host);
+
+    return address;
+}
+
 
 /*
  * Returns the socket_fd created by the connect call.
  */
-int connect_to_server(int socket, int port, struct hostent *addr) {
+int connectToServer(int socket, int port, struct hostent *addr) {
     struct sockaddr_in their_addr;
-
-    their_addr.sin_family = AF_INET;    // host byte order
-    their_addr.sin_port = htons(port);  // short, network byte order
-    their_addr.sin_addr = *((struct in_addr *) addr->h_addr);
-
-    memset(&(their_addr.sin_zero), '\0', 8);  // zero the rest of the struct
-
+    initAddress(&their_addr, port, addr);
     return connect(socket, (struct sockaddr *) &their_addr, sizeof(struct sockaddr));
 }
+
+
+/*
+ * UTILITIES
+ */
+
+int getPortFromUrl(const std::string &url) {
+    int index = (int) url.find(':', 7); // Skip the udp:// part of the url
+    return index == -1 ? 80 : readInt(url, index + 1);
+}
+
+std::string getDomainFromUrl(const std::string &url) {
+    // Finding stuff to eliminate at the end (searches for port and /announce)
+    int index = (int) url.find(':', 7);
+    if (index == -1) {
+        index = (int) url.find('/', 7);
+    }
+
+
+    if (index == -1) {
+        return url.substr(6); // Remove the "udp://" part
+    } else {
+        // Remove the "udp://" part and the useless stuff (port, /announce) at the end.
+        return url.substr(6, (unsigned long) (index - 6));
+    }
+}
+
+std::string getHumanReadableIP(uint32_t ip) {
+    struct in_addr ip_addr;
+    ip_addr.s_addr = ip;
+    return inet_ntoa(ip_addr);
+};
