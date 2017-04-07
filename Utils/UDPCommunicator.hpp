@@ -25,7 +25,7 @@ public:
 
     UDPCommunicator(const std::string &hostName, int hostPort, int sourcePort);
 
-    bool setServer(const std::string &name, int port);
+    void setServer(const std::string &name, int port);
 
     void sendRequest(const std::string &message);
 
@@ -39,7 +39,7 @@ public:
 
     bool connect();
 
-    bool disconnect();
+    void disconnect();
 };
 
 

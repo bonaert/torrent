@@ -180,7 +180,7 @@ int createUDPSocket(int sourcePort, int timeout) {
     struct sockaddr_in sourceAddress;
     sourceAddress.sin_family = AF_INET;
     sourceAddress.sin_addr.s_addr = htonl(INADDR_ANY);
-    sourceAddress.sin_port = htons(sourcePort);
+    sourceAddress.sin_port = htons((uint16_t) sourcePort);
     bzero(&sourceAddress.sin_zero, 8);
 
     if (bind(socketFd, (struct sockaddr *) &sourceAddress, sizeof(sourceAddress)) < 0) {

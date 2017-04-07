@@ -9,7 +9,7 @@ UDPCommunicator::UDPCommunicator(const std::string &hostName, int hostPort, int 
     setServer(hostName, hostPort);
 }
 
-bool UDPCommunicator::setServer(const std::string &name, int port) {
+void UDPCommunicator::setServer(const std::string &name, int port) {
     hostName = name;
     hostPort = port;
 }
@@ -74,7 +74,7 @@ int UDPCommunicator::getSourcePort() const {
     return sourcePort;
 }
 
-bool UDPCommunicator::disconnect() {
+void UDPCommunicator::disconnect() {
     close(socket);
 }
 

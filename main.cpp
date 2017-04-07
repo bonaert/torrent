@@ -18,6 +18,11 @@ void downloadTorrent(std::string filename) {
     int pieceSize = torrent.pieceLength();
     std::string name = torrent.name();
 
+    std::cout << "Here are some stats for the torrent" << std::endl;
+    std::cout << "Total size: " << totalSize << " bytes" << std::endl;
+    std::cout << "Number of pieces: " << numPieces << " pieces" << std::endl;
+    std::cout << "Piece size: " << pieceSize << " bytes" << std::endl;
+
 
     Client client(torrent);
     client.getNewPeers();
