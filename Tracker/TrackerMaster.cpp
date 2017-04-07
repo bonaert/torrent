@@ -1,7 +1,9 @@
+#include <iostream>
 #include "TrackerMaster.hpp"
 #include "../Client.hpp"
 #include "HTTPTracker.hpp"
 #include "UDPTracker.hpp"
+#include "../Utils/Tools.hpp"
 
 TrackerMaster::TrackerMaster(Client *client) : client(client) {
 
@@ -9,10 +11,13 @@ TrackerMaster::TrackerMaster(Client *client) : client(client) {
 
 void TrackerMaster::addTracker(const std::string &announceUrl) {
     Tracker *tracker = nullptr;
-    if (false /* TODO */ ) {
+    if (startsWith(announceUrl, "http://")) {
         tracker = new HTTPTracker(this, announceUrl);
-    } else {
+    } else if (startsWith(announceUrl, "udp://")) {
         tracker = new UDPTracker(this, announceUrl);
+    } else {
+        std::cout << "Invalid url " << announceUrl << std::endl;
+        return;
     }
     trackers.push_back(tracker);
 }

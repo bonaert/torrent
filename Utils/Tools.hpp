@@ -30,4 +30,6 @@ int32_t readInt32AndAdvancePointer(char **bufferPointer);
 
 int16_t readInt16AndAdvancePointer(char **bufferPointer);
 
+bool startsWith(const std::string &source, const std::string &beginning);
+
 #endif //TORRENT_TOOLS_HPP

@@ -114,3 +114,7 @@ int16_t readInt16AndAdvancePointer(char **bufferPointer) {
     *bufferPointer += 2;
     return (int16_t) be16toh(value);
 }
+
+bool startsWith(const std::string &source, const std::string &beginning) {
+    return source.compare(0, beginning.size(), beginning) == 0;
+}
