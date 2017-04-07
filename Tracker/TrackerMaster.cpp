@@ -26,6 +26,13 @@ void TrackerMaster::getPeers() {
     for (auto &&tracker : trackers) {
         tracker->updatePeers();
     }
+
+    std::cout << std::endl << std::endl;
+    for (auto &&tracker : trackers) {
+        for (auto &&peer : tracker->getPeers()) {
+            std::cout << "Current peer: " << getHumanReadableIP((uint32_t) peer.ip) << std::endl;
+        }
+    }
 }
 
 const int8_t *TrackerMaster::getInfoHash() {

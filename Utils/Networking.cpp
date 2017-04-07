@@ -171,7 +171,7 @@ int createUDPSocket(int sourcePort, int timeout) {
     }
 
     struct timeval tv;
-    tv.tv_sec = 10;
+    tv.tv_sec = timeout;
     tv.tv_usec = 0;
     if (setsockopt(socketFd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
         perror("Error");

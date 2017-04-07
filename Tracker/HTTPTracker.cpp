@@ -209,14 +209,17 @@ HTTPTracker::HTTPTracker(TrackerMaster *trackerMaster, const std::string &announ
 }
 
 void HTTPTracker::updatePeers() {
-    sendGetPeersRequest();
+    bool success = sendGetPeersRequest();
+    if (success) {
+        getResponseFromTracker();
+    }
 }
 
-void HTTPTracker::sendGetPeersRequest() {
-    sendGetPeersRequest("");
+bool HTTPTracker::sendGetPeersRequest() {
+    return sendGetPeersRequest("");
 }
 
-void HTTPTracker::sendGetPeersRequest(const std::string &event) {
+bool HTTPTracker::sendGetPeersRequest(const std::string &event) {
 //    std::string protocolLessURL = announce.substr(6, announce.size() - 6);
     TrackerRequest request(announceUrl);
     const int8_t *hash = trackerMaster->getInfoHash();
@@ -236,7 +239,11 @@ void HTTPTracker::sendGetPeersRequest(const std::string &event) {
             .addEvent(event)
             .getRequestURL();
 
-    sendRequest(requestMessage);
+    return sendRequest(requestMessage);
+}
+
+bool HTTPTracker::getResponseFromTracker() {
+    return false;
 }
 
 
@@ -292,10 +299,11 @@ void Client::updatePeers() {
  */
 
 
-void HTTPTracker::sendRequest(std::string url) {
+bool HTTPTracker::sendRequest(std::string url) {
     CURL *curl;
     CURLcode res;
 
+    bool success = false;
     curl = curl_easy_init();
     if (curl) {
         curl_easy_setopt(curl, CURLOPT_URL, url);
@@ -307,11 +315,14 @@ void HTTPTracker::sendRequest(std::string url) {
         /* Check for errors */
         if (res != CURLE_OK) {
             fprintf(stderr, "curl_easy_perform() failed: %s\nHost: %s\n", curl_easy_strerror(res), url.c_str());
+        } else {
+            success = true;
         }
 
         /* always cleanup */
         curl_easy_cleanup(curl);
     }
+    return success;
 }
 
 
