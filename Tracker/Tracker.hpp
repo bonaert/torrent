@@ -3,7 +3,10 @@
 
 #include <string>
 #include <vector>
+#include "TrackerMaster.hpp"
 
+
+class TrackerMaster;
 const std::vector<std::string> ACCEPTED_EVENTS = {"", "started", "completed", "stopped"};
 static const int DEFAULT_PORT = 6881;
 
@@ -13,13 +16,19 @@ typedef struct PeerInfo {
 } PeerInfo;
 
 
+
 class Tracker {
 protected:
     std::vector<PeerInfo> peers;
+    TrackerMaster *trackerMaster;
 public:
+    Tracker(TrackerMaster *trackerMaster);
+
     virtual void updatePeers() = 0;
 
     virtual const std::vector<PeerInfo> &getPeers() const;
+
+    virtual void addPeer(PeerInfo &peerInfo);
 };
 
 

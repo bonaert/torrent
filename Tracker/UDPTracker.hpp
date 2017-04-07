@@ -73,7 +73,6 @@ struct AnnounceResponse {
 
 class UDPTracker : public Tracker {
 private:
-    Client *client;
     UDPCommunicator *udpCommunicator;
 
 
@@ -99,7 +98,7 @@ private:
 
 
 public:
-    UDPTracker(Client *client, const std::string &announceURL);
+    UDPTracker(TrackerMaster *trackerMaster, const std::string &announceURL);
 
     virtual void updatePeers();
 };

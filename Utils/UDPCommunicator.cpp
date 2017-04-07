@@ -1,5 +1,9 @@
 #include "UDPCommunicator.hpp"
 
+UDPCommunicator::UDPCommunicator(int sourcePort) : sourcePort(sourcePort) {
+
+}
+
 UDPCommunicator::UDPCommunicator(const std::string &hostName, int hostPort, int sourcePort) :
         sourcePort(sourcePort) {
     setServer(hostName, hostPort);
@@ -73,4 +77,6 @@ int UDPCommunicator::getSourcePort() const {
 bool UDPCommunicator::disconnect() {
     close(socket);
 }
+
+
 

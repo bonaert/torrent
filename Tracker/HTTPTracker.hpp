@@ -3,11 +3,28 @@
 
 #include <string>
 #include <vector>
+#include "Tracker.hpp"
 #include "../BEncode.hpp"
 
 
-class HTTPTracker {
+class HTTPTracker : public Tracker {
+private:
+    std::string announceUrl;
 
+public:
+    HTTPTracker(TrackerMaster *trackerMaster, const std::string &announceURL);
+
+    void updatePeers() override;
+
+    void sendRequest(std::string url);
+
+    void sendGetPeersRequestToTracker();
+
+    void sendGetPeersRequestToTracker(const std::string &event);
+
+    void sendGetPeersRequestToTracker(const std::string &announce, const std::string &event);
+
+    void processGetPeersResponseFromTracker(const std::string &response);
 };
 
 /*

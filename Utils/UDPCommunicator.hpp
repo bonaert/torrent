@@ -21,7 +21,7 @@ private:
     sockaddr_in *serverAddress;
 
 public:
-    UDPCommunicator(int sourcePort) : sourcePort(sourcePort) {};
+    UDPCommunicator(int sourcePort);
 
     UDPCommunicator(const std::string &hostName, int hostPort, int sourcePort);
 

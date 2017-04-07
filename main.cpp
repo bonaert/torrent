@@ -2,8 +2,8 @@
 #include <iostream>
 #include <assert.h>
 #include "Torrent.hpp"
-#include "Utils/Tools.hpp"
 #include "Client.hpp"
+#include "Utils/Tools.hpp"
 
 /*
  * The following examples methods demonstrate how the API should be used.
@@ -20,7 +20,7 @@ void downloadTorrent(std::string filename) {
 
 
     Client client(torrent);
-    client.sendGetPeersUDPRequestToTracker();
+    client.getNewPeers();
 /*
     Client client(torrent);
     client.start(); // Starts the torrent in a new thread [NOT SURE, MAY CHANGE]

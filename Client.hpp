@@ -3,11 +3,8 @@
 
 #include <string>
 #include "Torrent.hpp"
-#include "Tracker/UDPTracker.hpp"
-#include "Utils/UDPCommunicator.hpp"
 #include "Tracker/TrackerMaster.hpp"
 
-const int DEFAULT_PORT = 6881;
 
 class PeerInfo;
 
@@ -19,10 +16,6 @@ class Client {
     int8_t peerID[20];
 
     /* Tracker information */
-//    TrackerResponse * latestTrackerResponse;
-//    std::string trackerID;
-
-
     int numBytesUploaded;
     int numBytesDownloaded;
     int numBytesLeft;
@@ -38,31 +31,17 @@ public:
 
     Client(Torrent &torrent);
 
+    void setup();
+
     /* Trackers communication */
-    void sendGetPeersRequestToTracker(const std::string &event);
-    void sendGetPeersRequestToTracker();
+    void getNewPeers();
 
-    bool sendGetPeersUDPRequestToTracker(const std::string &event);
-
-    void processGetPeersResponseFromTracker(const std::string& response);
-
-
-
-
-
-    void sendRequest(std::string basic_string);
-
-    void updatePeers();
-
-    void sendGetPeersRequestToTracker(const std::string &announce, const std::string &event);
-
-    void sendGetPeersUDPRequestToTracker();
+    void addPeer(PeerInfo &peer);
 
 
     const int8_t *getPeerID() const;
 
     const int8_t *getInfoHash() const;
-
 
     int getNumBytesUploaded() const;
 
@@ -70,9 +49,6 @@ public:
 
     int getNumBytesLeft() const;
 
-    void addPeer(PeerInfo &peer);
-
-    void setup();
 };
 
 

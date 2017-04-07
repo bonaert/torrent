@@ -3,7 +3,6 @@
 #include <iostream>
 #include "UDPTracker.hpp"
 #include "../Utils/Tools.hpp"
-#include "../Client.hpp"
 
 
 /*
@@ -19,9 +18,10 @@
  * UDP Tracker
  */
 
-UDPTracker::UDPTracker(Client *client, const std::string &announceURL) : client(client),
-                                                                         connectionID(-1),
-                                                                         transactionID(-1) {
+UDPTracker::UDPTracker(TrackerMaster *trackerMaster, const std::string &announceURL) :
+        Tracker(trackerMaster),
+        connectionID(-1),
+        transactionID(-1) {
     trackerDomain = getDomainFromUrl(announceURL);
     int trackerPort = getPortFromUrl(announceURL);
     udpCommunicator = new UDPCommunicator(trackerDomain, trackerPort, DEFAULT_PORT);
@@ -80,7 +80,7 @@ bool UDPTracker::processGetPeersResponse() {
     }
 
     for (PeerInfo &peer : announceResponse.peers) {
-        client->addPeer(peer);
+        addPeer(peer);
         std::cout << "Added leecher with IP " << getHumanReadableIP((uint32_t) peer.ip) << std::endl;
     }
     return true;
@@ -92,15 +92,15 @@ AnnounceRequest UDPTracker::buildAnnounceRequest() const {
     request.connectionID = connectionID;
     request.transactionID = transactionID;
 
-    const int8_t *infoHash = client->getInfoHash();
+    const int8_t *infoHash = trackerMaster->getInfoHash();
     copyArray((char *) infoHash, (char *) request.infoHash, 20);
 
-    const int8_t *peerID = client->getPeerID();
+    const int8_t *peerID = trackerMaster->getPeerID();
     copyArray((char *) peerID, (char *) request.peerID, 20);
 
-    request.numBytesDownloaded = client->getNumBytesDownloaded();
-    request.numBytesUploaded = client->getNumBytesUploaded();
-    request.numBytesLeft = client->getNumBytesLeft();
+    request.numBytesDownloaded = trackerMaster->getNumBytesDownloaded();
+    request.numBytesUploaded = trackerMaster->getNumBytesUploaded();
+    request.numBytesLeft = trackerMaster->getNumBytesLeft();
     request.event = 0; // Started. TODO: change this later as appropriate
     request.port = (uint16_t) udpCommunicator->getSourcePort();
 
@@ -234,7 +234,7 @@ void Client::sendGetPeersUDPRequestToTracker() {
     }
 
     for (const std::string & announceUrl: torrent.metaInfo.announceList) {
-        success = sendGetPeersUDPRequestToTracker(announceUrl);
+        success = getNewPeers(announceUrl);
         if (success) {
             return;
         }
