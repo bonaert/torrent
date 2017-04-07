@@ -7,15 +7,10 @@
 
 /*
  *
- * TRACKER UDP REQUEST
+ * UDP TRACKER
  *
  * http://www.bittorrent.org/beps/bep_0015.html
  *
- */
-
-
-/*
- * UDP Tracker
  */
 
 UDPTracker::UDPTracker(TrackerMaster *trackerMaster, const std::string &announceURL) :
@@ -218,29 +213,3 @@ AnnounceResponse::AnnounceResponse(char *buffer, int numChars) {
     }
 
 }
-
-
-
-
-
-
-
-
-/*
-void Client::sendGetPeersUDPRequestToTracker() {
-    bool success = sendGetPeersUDPRequestToTracker(torrent.metaInfo.announceURL);
-    if (success) {
-        return;
-    }
-
-    for (const std::string & announceUrl: torrent.metaInfo.announceList) {
-        success = getNewPeers(announceUrl);
-        if (success) {
-            return;
-        }
-    }
-}
- */
-
-
-

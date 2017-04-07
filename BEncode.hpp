@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 
-using intType = int64_t;
+using intType = int32_t;
 
 // Root class
 class BItem {};

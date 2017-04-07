@@ -7,9 +7,141 @@
 
 /*
  *
- * TRACKER HTTP REQUEST (LEGACY)
+ * HTTP TRACKER
  *
  */
+
+
+
+HTTPTracker::HTTPTracker(TrackerMaster *trackerMaster, const std::string &announceURL) :
+        Tracker(trackerMaster), announceUrl(announceURL) {
+}
+
+void HTTPTracker::updatePeers() {
+    bool success = sendGetPeersRequest();
+    if (success) {
+        getResponseFromTracker();
+    }
+}
+
+bool HTTPTracker::sendGetPeersRequest() {
+    return sendGetPeersRequest("");
+}
+
+bool HTTPTracker::sendGetPeersRequest(const std::string &event) {
+//    std::string protocolLessURL = announce.substr(6, announce.size() - 6);
+    TrackerRequest request(announceUrl);
+    const int8_t *hash = trackerMaster->getInfoHash();
+    std::string hashString = std::string((char *) hash, 20);
+
+    const int8_t *peerID = trackerMaster->getPeerID();
+    std::string peerIDString = std::string((char *) peerID, 20);
+
+    std::string requestMessage = request
+            .addInfoHash(hashString)
+            .addPeerID(peerIDString)
+            .addPort(-1) // BUG
+            .addDownloadedBytes((int) trackerMaster->getNumBytesDownloaded())
+            .addUploadedBytes((int) trackerMaster->getNumBytesUploaded())
+            .addBytesLeft((int) trackerMaster->getNumBytesLeft())
+            .addAcceptsCompactResponseFlag(false)
+            .addEvent(event)
+            .getRequestURL();
+
+    return sendRequest(requestMessage);
+}
+
+bool HTTPTracker::getResponseFromTracker() {
+    return false;
+}
+
+
+void HTTPTracker::processGetPeersResponseFromTracker(const std::string &response) {
+    /*
+    if (latestTrackerResponse == nullptr) {
+        latestTrackerResponse = buildTrackerResponse(response);
+    } else {
+        *latestTrackerResponse = *buildTrackerResponse(response);
+    }
+
+
+    // Handle error cases
+    if (latestTrackerResponse->failed) {
+        std::cout << "The tracker couldn't send peers for the following reason:" << std::endl;
+        std::cout << latestTrackerResponse->failureReason << std::endl;
+        return;
+    }
+
+    if (latestTrackerResponse->warning.length() != 0) {
+        std::cout << "The tracker sent the following warning:" << std::endl;
+        std::cout << latestTrackerResponse->warning << std::endl;
+    }
+
+
+
+    // Process response
+    if (latestTrackerResponse->trackerID.size() != 0) {
+        trackerID = latestTrackerResponse->trackerID; // Update the tracker ID
+    }
+
+    updatePeers();
+    */
+}
+
+
+/*
+void Client::updatePeers() {
+    // TODO: for now, it only appends the new peers
+    // However, there could be duplicates, which is bad, so later I'll have to fix
+    // This could be done easily by using a set, and implementing a comparison
+    // operation on the peers that only compares their peer ID
+
+    for (const Peer &peer : latestTrackerResponse->peers) {
+        peers.push_back(peer);
+    }
+
+}
+*/
+
+/*
+ * NETWORKING
+ */
+
+
+bool HTTPTracker::sendRequest(std::string url) {
+    CURL *curl;
+    CURLcode res;
+
+    bool success = false;
+    curl = curl_easy_init();
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_LOCALPORT, DEFAULT_PORT);
+
+        /* Perform the request, res will get the return code */
+        res = curl_easy_perform(curl);
+
+        /* Check for errors */
+        if (res != CURLE_OK) {
+            fprintf(stderr, "curl_easy_perform() failed: %s\nHost: %s\n", curl_easy_strerror(res), url.c_str());
+        } else {
+            success = true;
+        }
+
+        /* always cleanup */
+        curl_easy_cleanup(curl);
+    }
+    return success;
+}
+
+
+
+
+
+
+
+
+
 
 
 TrackerRequest::TrackerRequest(std::string announceUrl) : requestString(announceUrl + '?'),
@@ -201,129 +333,6 @@ void TrackerResponse::parseResponse(const BDictionary &response) {
 
 
 
-
-
-
-HTTPTracker::HTTPTracker(TrackerMaster *trackerMaster, const std::string &announceURL) :
-        Tracker(trackerMaster), announceUrl(announceURL) {
-}
-
-void HTTPTracker::updatePeers() {
-    bool success = sendGetPeersRequest();
-    if (success) {
-        getResponseFromTracker();
-    }
-}
-
-bool HTTPTracker::sendGetPeersRequest() {
-    return sendGetPeersRequest("");
-}
-
-bool HTTPTracker::sendGetPeersRequest(const std::string &event) {
-//    std::string protocolLessURL = announce.substr(6, announce.size() - 6);
-    TrackerRequest request(announceUrl);
-    const int8_t *hash = trackerMaster->getInfoHash();
-    std::string hashString = std::string((char *) hash, 20);
-
-    const int8_t *peerID = trackerMaster->getPeerID();
-    std::string peerIDString = std::string((char *) peerID, 20);
-
-    std::string requestMessage = request
-            .addInfoHash(hashString)
-            .addPeerID(peerIDString)
-            .addPort(-1) // BUG
-            .addDownloadedBytes((int) trackerMaster->getNumBytesDownloaded())
-            .addUploadedBytes((int) trackerMaster->getNumBytesUploaded())
-            .addBytesLeft((int) trackerMaster->getNumBytesLeft())
-            .addAcceptsCompactResponseFlag(false)
-            .addEvent(event)
-            .getRequestURL();
-
-    return sendRequest(requestMessage);
-}
-
-bool HTTPTracker::getResponseFromTracker() {
-    return false;
-}
-
-
-void HTTPTracker::processGetPeersResponseFromTracker(const std::string &response) {
-    /*
-    if (latestTrackerResponse == nullptr) {
-        latestTrackerResponse = buildTrackerResponse(response);
-    } else {
-        *latestTrackerResponse = *buildTrackerResponse(response);
-    }
-
-
-    // Handle error cases
-    if (latestTrackerResponse->failed) {
-        std::cout << "The tracker couldn't send peers for the following reason:" << std::endl;
-        std::cout << latestTrackerResponse->failureReason << std::endl;
-        return;
-    }
-
-    if (latestTrackerResponse->warning.length() != 0) {
-        std::cout << "The tracker sent the following warning:" << std::endl;
-        std::cout << latestTrackerResponse->warning << std::endl;
-    }
-
-
-
-    // Process response
-    if (latestTrackerResponse->trackerID.size() != 0) {
-        trackerID = latestTrackerResponse->trackerID; // Update the tracker ID
-    }
-
-    updatePeers();
-    */
-}
-
-
-/*
-void Client::updatePeers() {
-    // TODO: for now, it only appends the new peers
-    // However, there could be duplicates, which is bad, so later I'll have to fix
-    // This could be done easily by using a set, and implementing a comparison
-    // operation on the peers that only compares their peer ID
-
-    for (const Peer &peer : latestTrackerResponse->peers) {
-        peers.push_back(peer);
-    }
-
-}
-*/
-
-/*
- * NETWORKING
- */
-
-
-bool HTTPTracker::sendRequest(std::string url) {
-    CURL *curl;
-    CURLcode res;
-
-    bool success = false;
-    curl = curl_easy_init();
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, url);
-        curl_easy_setopt(curl, CURLOPT_LOCALPORT, DEFAULT_PORT);
-
-        /* Perform the request, res will get the return code */
-        res = curl_easy_perform(curl);
-
-        /* Check for errors */
-        if (res != CURLE_OK) {
-            fprintf(stderr, "curl_easy_perform() failed: %s\nHost: %s\n", curl_easy_strerror(res), url.c_str());
-        } else {
-            success = true;
-        }
-
-        /* always cleanup */
-        curl_easy_cleanup(curl);
-    }
-    return success;
-}
 
 
 

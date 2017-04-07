@@ -34,10 +34,6 @@ struct ConnectResponse {
     int64_t connectionID;
 };
 
-//ConnectResponse getConnectResponse();
-
-
-
 struct AnnounceRequest {
     int64_t connectionID;
     int32_t action = 1;           // 1 = announce
@@ -55,9 +51,6 @@ struct AnnounceRequest {
     uint16_t extensions = 0;
 };
 
-
-//void sendAnnounceRequest(const AnnounceRequest& request);
-
 struct AnnounceResponse {
     AnnounceResponse(char buffer[], int numChars);
 
@@ -69,7 +62,6 @@ struct AnnounceResponse {
     std::vector<PeerInfo> peers;
 };
 
-//AnnounceReponse getAnnounceReponse();
 
 class UDPTracker : public Tracker {
 private:
