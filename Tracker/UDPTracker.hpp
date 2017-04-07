@@ -17,7 +17,6 @@
 
 class Client;
 
-static const int DEFAULTPORT = 6881;
 // WARNING: make sure you initialize the seed once before using this!
 struct ConnectRequest {
     int64_t protocolID = 0x41727101980; // Magic number

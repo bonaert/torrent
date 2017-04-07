@@ -24,7 +24,7 @@ UDPTracker::UDPTracker(Client *client, const std::string &announceURL) : client(
                                                                          transactionID(-1) {
     trackerDomain = getDomainFromUrl(announceURL);
     int trackerPort = getPortFromUrl(announceURL);
-    udpCommunicator = new UDPCommunicator(trackerDomain, trackerPort, DEFAULTPORT);
+    udpCommunicator = new UDPCommunicator(trackerDomain, trackerPort, DEFAULT_PORT);
 }
 
 void UDPTracker::updatePeers() {
