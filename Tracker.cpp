@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Tracker.hpp"
 #include "Utils/Tools.hpp"
+#include "Client.hpp"
 
 
 /*
@@ -21,16 +22,21 @@
 UDPTracker::UDPTracker(Client *client, const std::string &announceURL) : client(client),
                                                                          connectionID(-1),
                                                                          transactionID(-1) {
-    const std::string &trackerDomain = getDomainFromUrl(announceURL);
+    trackerDomain = getDomainFromUrl(announceURL);
     int trackerPort = getPortFromUrl(announceURL);
     udpCommunicator = new UDPCommunicator(trackerDomain, trackerPort, DEFAULTPORT);
 }
 
 void UDPTracker::getPeers() {
-    if (udpCommunicator->foundServer()) {
-        connectToServer();
-        getPeersFromServer();
+    bool foundServer = udpCommunicator->connect();
+    if (foundServer) {
+        std::cout << "Connected to tracker " << trackerDomain << std::endl;
+        bool success = connectToServer();
+        if (success) {
+            getPeersFromServer();
+        }
     }
+    udpCommunicator->disconnect();
 }
 
 bool UDPTracker::getPeersFromServer() {

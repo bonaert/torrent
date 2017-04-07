@@ -162,12 +162,19 @@ int createTCPSocket() {
     return sockfd;
 }
 
-int createUDPSocket(int sourcePort) {
+int createUDPSocket(int sourcePort, int timeout) {
     int socketFd;
 
     if ((socketFd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
         perror("Couldn't create UDP socket");
         exit(1);
+    }
+
+    struct timeval tv;
+    tv.tv_sec = 10;
+    tv.tv_usec = 0;
+    if (setsockopt(socketFd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
+        perror("Error");
     }
 
     struct sockaddr_in sourceAddress;
@@ -181,6 +188,7 @@ int createUDPSocket(int sourcePort) {
         perror(errorMessage.c_str());
         exit(1);
     }
+
 
     return socketFd;
 }

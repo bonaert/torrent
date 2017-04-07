@@ -8,12 +8,19 @@ UDPCommunicator::UDPCommunicator(const std::string &hostName, int hostPort, int 
 bool UDPCommunicator::setServer(const std::string &name, int port) {
     hostName = name;
     hostPort = port;
+}
+
+bool UDPCommunicator::connect() {
     socket = createUDPSocket(sourcePort);
-    serverAddress = buildAddress(name, port);
+    serverAddress = buildAddress(hostName, hostPort);
     return (serverAddress != nullptr);
 }
 
 int UDPCommunicator::sendRequest(char *buffer, int size) {
+    if (serverAddress == nullptr) {
+        connect();
+    }
+
     ssize_t errorCode = sendto(socket, buffer, (size_t) size, 0, (const sockaddr *) serverAddress, sizeof(sockaddr));
     if (errorCode == -1) {
         perror("Couldn't send UDP request");
@@ -22,6 +29,10 @@ int UDPCommunicator::sendRequest(char *buffer, int size) {
 }
 
 void UDPCommunicator::sendRequest(const std::string &message) {
+    if (serverAddress == nullptr) {
+        connect();
+    }
+
     ssize_t errorCode = sendto(socket, message.c_str(), message.size(), 0, (const sockaddr *) serverAddress,
                                sizeof(sockaddr));
     if (errorCode == -1) {
@@ -57,5 +68,9 @@ bool UDPCommunicator::foundServer() {
 
 int UDPCommunicator::getSourcePort() const {
     return sourcePort;
+}
+
+bool UDPCommunicator::disconnect() {
+    close(socket);
 }
 

@@ -36,6 +36,10 @@ public:
     std::string receiveResponse(int size);
 
     int receiveResponse(char *buffer, int size);
+
+    bool connect();
+
+    bool disconnect();
 };
 
 

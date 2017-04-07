@@ -3,18 +3,24 @@
 #include <curl/curl.h>
 
 
-Client::Client(std::string &filename) : torrent(filename) {
-    buildPeerID();
-    numBytesUploaded = 0;
-    numBytesDownloaded = 0;
-    numBytesLeft = torrent.size();
+Client::Client(std::string &filename) : trackerMaster(this), torrent(filename) {
+    setup();
 }
 
-Client::Client(Torrent &torrent) : torrent(torrent) {
+Client::Client(Torrent &torrent) : trackerMaster(this), torrent(torrent) {
+    setup();
+}
+
+void Client::setup() {
     buildPeerID();
     numBytesUploaded = 0;
     numBytesDownloaded = 0;
     numBytesLeft = torrent.size();
+
+    trackerMaster.addTracker(torrent.metaInfo.announceURL);
+    for (auto &&announceUrl : torrent.metaInfo.announceList) {
+        trackerMaster.addTracker(announceUrl);
+    }
 }
 
 
@@ -27,8 +33,9 @@ Client::Client(Torrent &torrent) : torrent(torrent) {
 
 
 void Client::sendGetPeersUDPRequestToTracker() {
-    UDPTracker tracker(this, torrent.metaInfo.announceURL);
-    tracker.getPeers();
+    trackerMaster.getPeers();
+//    UDPTracker tracker(this, torrent.metaInfo.announceURL);
+//    tracker.getPeers();
     /*
     bool success = sendGetPeersUDPRequestToTracker(torrent.metaInfo.announceURL);
     if (success) {

@@ -17,7 +17,7 @@ set(SOURCE_FILES
         Utils/Networking.cpp Utils/Networking.hpp
         )
 
-add_executable(torrent main.cpp ${SOURCE_FILES})
+add_executable(torrent main.cpp ${SOURCE_FILES} TrackerMaster.cpp TrackerMaster.hpp)
 add_executable(torrentTest test.cpp ${SOURCE_FILES})
 
 target_link_libraries(torrent curl)

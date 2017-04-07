@@ -4,7 +4,7 @@
 #include <string>
 #include "Torrent.hpp"
 #include "Utils/UDPCommunicator.hpp"
-#include "Client.hpp"
+
 
 const std::vector<std::string> ACCEPTED_EVENTS = {"", "started", "completed", "stopped"};
 
@@ -56,7 +56,7 @@ struct AnnounceRequest {
     int32_t event = 0;       // 0: none; 1: completed; 2: started; 3: stopped
     uint32_t IPAdress = 0;    // 0: default
     uint32_t key = 0;
-    int32_t numPeersWanted = -1;
+    int32_t numPeersWanted = 50;
     uint16_t port;
     uint16_t extensions = 0;
 };
@@ -86,6 +86,7 @@ private:
 
     int32_t transactionID;
     int64_t connectionID;
+    std::string trackerDomain;
 
     bool connectToServer();
 
@@ -107,6 +108,8 @@ public:
     AnnounceRequest buildAnnounceRequest() const;
 
     void writeAnnounceRequestToBuffer(AnnounceRequest &request, char **pString, int *pInt);
+
+
 };
 
 

@@ -5,13 +5,17 @@
 #include "Torrent.hpp"
 #include "Tracker.hpp"
 #include "Utils/UDPCommunicator.hpp"
+#include "TrackerMaster.hpp"
 
 const int DEFAULT_PORT = 6881;
 
 class PeerInfo;
 
+class TrackerMaster;
+
 class Client {
     Torrent torrent;
+    TrackerMaster trackerMaster;
     int8_t peerID[20];
 
     /* Tracker information */
@@ -59,7 +63,6 @@ public:
 
     const int8_t *getInfoHash() const;
 
-    const std::string &getTrackerID() const;
 
     int getNumBytesUploaded() const;
 
@@ -68,6 +71,8 @@ public:
     int getNumBytesLeft() const;
 
     void addPeer(PeerInfo &peer);
+
+    void setup();
 };
 
 
