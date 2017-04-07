@@ -11,20 +11,18 @@ class HTTPTracker : public Tracker {
 private:
     std::string announceUrl;
 
+    void sendRequest(std::string url);
+
+    void sendGetPeersRequest();
+
+    void sendGetPeersRequest(const std::string &event);
+
+    void processGetPeersResponseFromTracker(const std::string &response);
+
 public:
     HTTPTracker(TrackerMaster *trackerMaster, const std::string &announceURL);
 
     void updatePeers() override;
-
-    void sendRequest(std::string url);
-
-    void sendGetPeersRequestToTracker();
-
-    void sendGetPeersRequestToTracker(const std::string &event);
-
-    void sendGetPeersRequestToTracker(const std::string &announce, const std::string &event);
-
-    void processGetPeersResponseFromTracker(const std::string &response);
 };
 
 /*

@@ -200,73 +200,43 @@ void TrackerResponse::parseResponse(const BDictionary &response) {
 }
 
 
+
+
+
+
+HTTPTracker::HTTPTracker(TrackerMaster *trackerMaster, const std::string &announceURL) :
+        Tracker(trackerMaster), announceUrl(announceUrl) {
+}
+
 void HTTPTracker::updatePeers() {
 
 }
 
-
-/*
- * NETWORKING
- */
-
-
-void HTTPTracker::sendRequest(std::string url) {
-    CURL *curl;
-    CURLcode res;
-
-    curl = curl_easy_init();
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, url);
-        curl_easy_setopt(curl, CURLOPT_LOCALPORT, 6881);
-
-        /* Perform the request, res will get the return code */
-        res = curl_easy_perform(curl);
-
-        /* Check for errors */
-        if (res != CURLE_OK) {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-        }
-
-        /* always cleanup */
-        curl_easy_cleanup(curl);
-    }
+void HTTPTracker::sendGetPeersRequest() {
+    sendGetPeersRequest("");
 }
 
-HTTPTracker::HTTPTracker(TrackerMaster *trackerMaster, const std::string &announceURL) :
-        Tracker(trackerMaster), announceUrl(announceUrl) {
-// TODO
-}
-
-
-/*
- * LEGACY
- */
-
-void HTTPTracker::sendGetPeersRequestToTracker() {
-    sendGetPeersRequestToTracker("");
-}
-
-void HTTPTracker::sendGetPeersRequestToTracker(const std::string &event) {
-    sendGetPeersRequestToTracker(announceUrl, event);
-}
-
-void HTTPTracker::sendGetPeersRequestToTracker(const std::string &announce, const std::string &event) {
+void HTTPTracker::sendGetPeersRequest(const std::string &event) {
 //    std::string protocolLessURL = announce.substr(6, announce.size() - 6);
-/*
-    TrackerRequest request(announce);
+    TrackerRequest request(announceUrl);
+    const int8_t *hash = trackerMaster->getInfoHash();
+    std::string hashString = std::string((char *) hash, 20);
+
+    const int8_t *peerID = trackerMaster->getPeerID();
+    std::string peerIDString = std::string((char *) peerID, 20);
+
     std::string requestMessage = request
-            .addInfoHash(torrent.metaInfo.infoDictHash)
-            .addPeerID(peerID)
+            .addInfoHash(hashString)
+            .addPeerID(peerIDString)
             .addPort(-1) // BUG
-            .addUploadedBytes(numBytesUploaded)
-            .addDownloadedBytes(numBytesDownloaded)
-            .addBytesLeft(numBytesLeft)
+            .addDownloadedBytes((int) trackerMaster->getNumBytesDownloaded())
+            .addUploadedBytes((int) trackerMaster->getNumBytesUploaded())
+            .addBytesLeft((int) trackerMaster->getNumBytesLeft())
             .addAcceptsCompactResponseFlag(false)
             .addEvent(event)
             .getRequestURL();
 
     sendRequest(requestMessage);
-    */
 }
 
 
@@ -316,6 +286,33 @@ void Client::updatePeers() {
 
 }
 */
+
+/*
+ * NETWORKING
+ */
+
+
+void HTTPTracker::sendRequest(std::string url) {
+    CURL *curl;
+    CURLcode res;
+
+    curl = curl_easy_init();
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_LOCALPORT, 6881);
+
+        /* Perform the request, res will get the return code */
+        res = curl_easy_perform(curl);
+
+        /* Check for errors */
+        if (res != CURLE_OK) {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        }
+
+        /* always cleanup */
+        curl_easy_cleanup(curl);
+    }
+}
 
 
 
