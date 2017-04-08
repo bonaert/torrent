@@ -25,7 +25,7 @@ void downloadTorrent(std::string filename) {
 
 
     Client client(torrent);
-    client.getNewPeers();
+    client.start();
 /*
     Client client(torrent);
     client.start(); // Starts the torrent in a new thread [NOT SURE, MAY CHANGE]

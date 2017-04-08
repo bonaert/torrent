@@ -1,5 +1,5 @@
 #include <cstring>
-#include "Peer.hpp"
+#include "PeerConnection.hpp"
 
 /* Handshake */
 

@@ -29,9 +29,20 @@ void Client::setup() {
  *   - "udp://fr33dom.h33t.com:3310/announce"
  */
 
+void Client::start() {
+    getNewPeers();
+    getDataFromPeers();
+}
 
 void Client::getNewPeers() {
-    trackerMaster.getPeers();
+    trackerMaster.fetchNewPeersFromTracker();
+    for (const PeerInfo &peer : trackerMaster.getAllPeers()) {
+        peers.insert(peer);
+    }
+}
+
+void Client::getDataFromPeers() {
+
 }
 
 
@@ -75,8 +86,10 @@ const int8_t *Client::getInfoHash() const {
 }
 
 void Client::addPeer(PeerInfo &peer) {
-    peers.push_back(peer);
+    peers.insert(peer);
 }
+
+
 
 
 

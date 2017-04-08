@@ -2,24 +2,31 @@
 #define TORRENT_TRACKERMASTER_HPP
 
 
+#include <set>
 #include "Tracker.hpp"
 
 
 class Client;
 
+class PeerInfo;
 class Tracker;
 
 
 class TrackerMaster {
 private:
     std::vector<Tracker *> trackers;
+    std::set<PeerInfo> allPeers;
+public:
+    const std::set<PeerInfo> &getAllPeers() const;
+
+private:
     Client *client;
 public:
     TrackerMaster(Client *client);
 
     void addTracker(const std::string &announceUrl);
 
-    void getPeers();
+    void fetchNewPeersFromTracker();
 
     const int8_t *getInfoHash();
 

@@ -22,14 +22,15 @@ void TrackerMaster::addTracker(const std::string &announceUrl) {
     trackers.push_back(tracker);
 }
 
-void TrackerMaster::getPeers() {
+void TrackerMaster::fetchNewPeersFromTracker() {
     for (auto &&tracker : trackers) {
         tracker->updatePeers();
     }
 
     std::cout << std::endl << std::endl;
-    for (auto &&tracker : trackers) {
-        for (auto &&peer : tracker->getPeers()) {
+    for (const Tracker *tracker : trackers) {
+        for (const PeerInfo &peer : tracker->getPeers()) {
+            allPeers.insert(peer);
             std::cout << "Current peer: " << getHumanReadableIP((uint32_t) peer.ip) << std::endl;
         }
     }
@@ -53,5 +54,9 @@ int64_t TrackerMaster::getNumBytesLeft() {
 
 int64_t TrackerMaster::getNumBytesUploaded() {
     return client->getNumBytesUploaded();
+}
+
+const std::set<PeerInfo> &TrackerMaster::getAllPeers() const {
+    return allPeers;
 }
 

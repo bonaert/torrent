@@ -21,7 +21,7 @@ class Client {
     int numBytesLeft;
 
 
-    std::vector<PeerInfo> peers;
+    std::set<PeerInfo> peers;
 
 
     void buildPeerID();
@@ -49,6 +49,9 @@ public:
 
     int getNumBytesLeft() const;
 
+    void start();
+
+    void getDataFromPeers();
 };
 
 

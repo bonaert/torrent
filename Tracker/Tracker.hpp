@@ -13,6 +13,11 @@ static const int DEFAULT_PORT = 6881;
 typedef struct PeerInfo {
     int32_t ip;
     uint16_t port;
+
+    // Needed for std::set insertion
+    bool operator<(const PeerInfo &other) const {
+        return ip < other.ip && port < other.port;
+    }
 } PeerInfo;
 
 
