@@ -69,6 +69,8 @@ public:
     int numActivePeers();
 
     std::string buildPath(const BDictionary &pathDictionary) const;
+
+    void printHash() const;
 };
 
 

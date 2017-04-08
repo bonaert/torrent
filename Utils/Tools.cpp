@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
+#include <openssl/sha.h>
 
 std::string urlencode(const std::string &string) {
     std::ostringstream escaped;
@@ -118,3 +119,8 @@ int16_t readInt16AndAdvancePointer(char **bufferPointer) {
 bool startsWith(const std::string &source, const std::string &beginning) {
     return source.compare(0, beginning.size(), beginning) == 0;
 }
+
+void computeSHA1Hash(unsigned char *result, const std::string &text) {
+    SHA1((const unsigned char *) text.c_str(), text.size(), result);
+}
+

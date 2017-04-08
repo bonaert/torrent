@@ -32,4 +32,6 @@ int16_t readInt16AndAdvancePointer(char **bufferPointer);
 
 bool startsWith(const std::string &source, const std::string &beginning);
 
+void computeSHA1Hash(unsigned char *result, const std::string &text);
+
 #endif //TORRENT_TOOLS_HPP

@@ -1,5 +1,7 @@
 
+#include <iostream>
 #include "Torrent.hpp"
+#include "Utils/Tools.hpp"
 
 Torrent::Torrent(std::string torrentFileName) : torrentFileName(torrentFileName) {
     parseTorrentFile();
@@ -88,8 +90,8 @@ void Torrent::parseTorrentFile() {
     const BDictionary &infoDictionary = metaInfoDict.getDictionary("info");
 
 
-    // TODO
-    // metaInfo.infoDictHash = hash(infoDictionary.getUnderlyingString());
+    computeSHA1Hash((unsigned char *) metaInfo.infoDictHash, infoDictionary.encode());
+    printHash();
 
 
     metaInfo.pieceLength = infoDictionary.getInt("piece length");
@@ -137,6 +139,16 @@ void Torrent::parseTorrentFile() {
     }
 
 
+}
+
+void Torrent::printHash() const {
+    for (int k = 0; k < 20; ++k) {
+        char i = metaInfo.infoDictHash[k];
+        char map[17] = "0123456789abcdef";
+        std::cout << map[i >> 4 & 0xF]
+                  << map[i & 0xF];
+    }
+    std::cout << std::endl;
 }
 
 std::string Torrent::buildPath(const BDictionary &pathDictionary) const {

@@ -9,7 +9,10 @@
 using intType = int32_t;
 
 // Root class
-class BItem {};
+class BItem {
+public:
+    virtual std::string encode() const = 0;
+};
 class BInteger;
 class BString;
 class BList;
@@ -28,6 +31,8 @@ public:
     BInteger(std::istream &stream);
 
     operator intType() { return value; } // Conversion to underlying value
+
+    std::string encode() const override;
 };
 
 
@@ -41,6 +46,8 @@ public:
     BString(std::istream &stream);
 
     operator std::string &() { return string; }
+
+    std::string encode() const override;
 };
 
 
@@ -60,6 +67,8 @@ public:
     BDictionary & getDictionary(int index)const;
 
     int size()const;
+
+    std::string encode() const override;
 };
 
 
@@ -80,6 +89,10 @@ public:
     BDictionary &getDictionary(const std::string &key);
 
     int size();
+
+    std::string encode() const override;
+
+    std::vector<std::string> getSortedKeys() const;
 };
 
 

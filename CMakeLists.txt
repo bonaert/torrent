@@ -23,4 +23,6 @@ add_executable(torrent main.cpp ${SOURCE_FILES})
 add_executable(torrentTest test.cpp ${SOURCE_FILES})
 
 target_link_libraries(torrent curl)
+target_link_libraries(torrent crypto)
 target_link_libraries(torrentTest curl)
+target_link_libraries(torrentTest crypto)

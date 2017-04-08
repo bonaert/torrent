@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <algorithm>
 #include "BEncode.hpp"
 #include "Utils/Tools.hpp"
 
@@ -30,7 +31,9 @@ BInteger::BInteger(std::istream &stream) {
 
 }
 
-
+std::string BInteger::encode() const {
+    return "i" + std::to_string(value) + "e";
+}
 
 
 /*
@@ -48,6 +51,9 @@ BString::BString(std::istream &stream) {
     string = std::string(buffer, (unsigned long) length);
 }
 
+std::string BString::encode() const {
+    return std::to_string(string.length()) + ":" + string;
+}
 
 
 /*
@@ -57,8 +63,8 @@ BString::BString(std::istream &stream) {
 BList::BList(std::istream &stream) {
     assert(stream.get() == 'l');
 
-    while (stream.peek() != 'e'){
-        BItem * item = parseBItem(stream);
+    while (stream.peek() != 'e') {
+        BItem *item = parseBItem(stream);
         items.push_back(item);
     }
 
@@ -74,24 +80,33 @@ intType BList::getInt(int index) const {
 
 std::string BList::getString(int index) const {
     BItem *type = items[index];
-    BString * string = static_cast<BString *>(type);
+    BString *string = static_cast<BString *>(type);
     return *string; // Implicit conversion from BString to std::string
 }
 
 BList &BList::getList(int index) {
     BItem *type = items[index];
-    BList * list = static_cast<BList *>(type);
+    BList *list = static_cast<BList *>(type);
     return *list;
 }
 
-BDictionary & BList::getDictionary(int index)const {
+BDictionary &BList::getDictionary(int index) const {
     BItem *type = items[index];
-    BDictionary * dictionary = static_cast<BDictionary *>(type);
+    BDictionary *dictionary = static_cast<BDictionary *>(type);
     return *dictionary;
 }
 
-int BList::size()const {
+int BList::size() const {
     return (int) items.size();
+}
+
+std::string BList::encode() const {
+    std::string encoded = "l";
+    for (auto &&item : items) {
+        encoded += item->encode();
+    }
+    encoded += "e";
+    return encoded;
 }
 
 
@@ -102,9 +117,9 @@ int BList::size()const {
 BDictionary::BDictionary(std::istream &stream) {
     assert(stream.get() == 'd');
 
-    while (stream.peek() != 'e'){
+    while (stream.peek() != 'e') {
         std::string key = BString(stream);
-        BItem * item = parseBItem(stream);
+        BItem *item = parseBItem(stream);
         itemMap[key] = item;
     }
 
@@ -124,19 +139,19 @@ intType BDictionary::getInt(const std::string &key) const {
 
 std::string BDictionary::getString(const std::string &key) const {
     BItem *type = itemMap.at(key);
-    BString * string = static_cast<BString *>(type);
+    BString *string = static_cast<BString *>(type);
     return *string; // Implicit conversion from BString to std::string
 }
 
-BList & BDictionary::getList(const std::string &key)const {
+BList &BDictionary::getList(const std::string &key) const {
     BItem *type = itemMap.at(key);
-    BList * list = static_cast<BList *>(type);
+    BList *list = static_cast<BList *>(type);
     return *list;
 }
 
-BDictionary & BDictionary::getDictionary(const std::string &key) {
+BDictionary &BDictionary::getDictionary(const std::string &key) {
     BItem *type = itemMap.at(key);
-    BDictionary * dictionary = static_cast<BDictionary *>(type);
+    BDictionary *dictionary = static_cast<BDictionary *>(type);
     return *dictionary;
 }
 
@@ -144,6 +159,28 @@ int BDictionary::size() {
     return (int) itemMap.size();
 }
 
+std::string BDictionary::encode() const {
+    std::string encoded = "d";
+    for (auto &&key : getSortedKeys()) {
+        const std::string &keyEncoded = BString(key).encode();
+        const std::string &valueEncoded = itemMap.at(key)->encode();
+
+        encoded += keyEncoded;
+        encoded += valueEncoded;
+    }
+    encoded += "e";
+
+    return encoded;
+}
+
+std::vector<std::string> BDictionary::getSortedKeys() const {
+    std::vector<std::string> keys;
+    for (auto &&keyAndValue : itemMap) {
+        keys.push_back(keyAndValue.first);
+    }
+    std::sort(keys.begin(), keys.end());
+    return keys;
+}
 
 
 /*
