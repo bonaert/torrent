@@ -150,13 +150,14 @@ int initConnectionToServer(char *server_ip_address, int port) {
 
 int initConnectionToServer(uint32_t ip, int port, int timeout) {
     int socket = createTCPSocket();
-    if (connectToServer(socket, port, ip, timeout) <= -1) {
+    if (!connectToServer(socket, port, ip, timeout)) {
         const std::string &message = "The connect to the host with port "
                                      + std::to_string(port)
                                      + " and ip address "
                                      + getHumanReadableIP(ip)
                                      + " has failed";
         perror(message.c_str());
+        close(socket);
         return -1;
     }
     return socket;
@@ -297,12 +298,14 @@ bool connectToServer(int socket, int port, uint32_t ip, int timeout) {
             getsockopt(socket, SOL_SOCKET, SO_ERROR, (void *) (&valopt), &lon);
             if (valopt) {
                 fprintf(stderr, "Error in connection() %d - %s\n", valopt, strerror(valopt));
+                setSocketAsBlocking(socket);
                 return false;
             }
         } else {
             lon = sizeof(int);
             getsockopt(socket, SOL_SOCKET, SO_ERROR, (void *) (&valopt), &lon);
             fprintf(stderr, "Timeout or error() %d - %s\n", valopt, strerror(valopt));
+            setSocketAsBlocking(socket);
             return false;
         }
 
