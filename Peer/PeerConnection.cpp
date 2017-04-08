@@ -1,5 +1,6 @@
 #include <cstring>
 #include "PeerConnection.hpp"
+#include "../Utils/Networking.hpp"
 
 /* Handshake */
 
@@ -21,7 +22,7 @@ std::string makeHandshakeMessage(const std::string &infoHash, const std::string 
 
 /* Messages */
 
-std::string formatInt(unsigned int x){
+std::string formatInt(unsigned int x) {
     // TODO: It must be big endian
     return std::to_string(x);
 }
@@ -32,7 +33,7 @@ std::string formatInt(unsigned int x){
 
 // bitfield message: <len=0001+X><id=5><bitfield>
 // X = size of the bitfield
-std::string makeBitfieldMessage(char * bitfield, int size) {
+std::string makeBitfieldMessage(char *bitfield, int size) {
     std::string message = formatInt((unsigned int) (1 + size));
     message += (char) (5);
     message += bitfield;
@@ -53,7 +54,7 @@ std::string makeRequestMessage(int pieceIndex, int offset, int length) {
 
 // piece: <len=0009+X><id=7><index><begin><block>
 // X = size of the block
-std::string makePieceMessage(int pieceIndex, int offset, int blockLength, char * block){
+std::string makePieceMessage(int pieceIndex, int offset, int blockLength, char *block) {
     std::string message = formatInt((unsigned int) (9 + blockLength));
     message += (char) 7; // ID
     message += pieceIndex;
@@ -75,4 +76,19 @@ std::string makeCancelMessage(int pieceIndex, int offset, int length) {
 }
 
 // port: <len=0003><id=9><listen-port>
-char * makePortMessage(int port);
+char *makePortMessage(int port);
+
+PeerConnection::PeerConnection(PeerInfo peerInfo, Client *client) :
+        peerInfo(peerInfo),
+        client(client),
+        socket(-1) {
+
+}
+
+void PeerConnection::connect() {
+    socket = initConnectionToServer((uint32_t) peerInfo.ip, peerInfo.port);
+}
+
+bool const PeerConnection::operator<(const PeerConnection &other) const {
+    return peerInfo < other.peerInfo;
+}

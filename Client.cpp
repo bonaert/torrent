@@ -37,12 +37,15 @@ void Client::start() {
 void Client::getNewPeers() {
     trackerMaster.fetchNewPeersFromTracker();
     for (const PeerInfo &peer : trackerMaster.getAllPeers()) {
-        peers.insert(peer);
+        addPeerConnection(peer);
     }
 }
 
 void Client::getDataFromPeers() {
-
+    for (auto it = peerConnections.begin(); it != peerConnections.end(); it++) {
+        PeerConnection &peerConnection = (PeerConnection & ) * it;
+        peerConnection.connect();
+    }
 }
 
 
@@ -85,8 +88,9 @@ const int8_t *Client::getInfoHash() const {
     return (const int8_t *) torrent.metaInfo.infoDictHash;
 }
 
-void Client::addPeer(PeerInfo &peer) {
-    peers.insert(peer);
+void Client::addPeerConnection(const PeerInfo &peer) {
+    PeerConnection connection(peer, this);
+    peerConnections.insert(connection);
 }
 
 

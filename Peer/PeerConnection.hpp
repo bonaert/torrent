@@ -2,6 +2,7 @@
 #define TORRENT_PEER_HPP
 
 #include <string>
+#include "../Tracker/Tracker.hpp"
 
 /*
  * A block is downloaded by the client when the client is interested in a peer, and
@@ -14,11 +15,24 @@
  * begin downloading when it is un-choked (and vice-versa).
  */
 
-struct PeerConnection {
+class Client;
+
+class PeerConnection {
+private:
     bool amChoking = true;      // this client is choking the peer
     bool amInterested = false;   // this client is interested in the peer
     bool peerChoking = true;    // peer is choking this client
     bool peerInterested = false; // peer is interested in this client
+    PeerInfo peerInfo;
+    Client *client;
+    int socket;
+public:
+    PeerConnection(PeerInfo peerInfo, Client *client);
+
+    void connect();
+
+    // Need to define this to put PeerConnection in a std::set
+    bool const operator<(const PeerConnection &other) const;
 };
 
 

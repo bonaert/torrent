@@ -147,6 +147,20 @@ int initConnectionToServer(char *server_ip_address, int port) {
 }
 
 
+int initConnectionToServer(uint32_t ip, int port) {
+    int socket = createTCPSocket();
+    if (connectToServer(socket, port, ip) <= -1) {
+        const std::string &message = "The connect to the host with port "
+                                     + std::to_string(port)
+                                     + " and ip address "
+                                     + getHumanReadableIP(ip)
+                                     + " has failed";
+        perror(message.c_str());
+        return -1;
+    }
+    return socket;
+}
+
 /*
  * SOCKETS
  */
@@ -202,6 +216,17 @@ void initAddress(struct sockaddr_in *address, int port, struct hostent *addr) {
     bzero(&(address->sin_zero), 8);  // zero the rest of the struct
 }
 
+void initAddress(struct sockaddr_in *address, int port, uint32_t ip) {
+    struct in_addr inAddress;
+    inAddress.s_addr = ip;
+
+    address->sin_family = AF_INET;    // host byte order
+    address->sin_port = htons((uint16_t) port);  // short, network byte order
+    address->sin_addr = inAddress;
+    bzero(&(address->sin_zero), 8);  // zero the rest of the struct
+}
+
+
 struct sockaddr_in *buildAddress(const std::string &name, int port) {
     struct hostent *host = gethostbyname(name.c_str());
     if (host == nullptr) {
@@ -223,6 +248,12 @@ struct sockaddr_in *buildAddress(const std::string &name, int port) {
 int connectToServer(int socket, int port, struct hostent *addr) {
     struct sockaddr_in their_addr;
     initAddress(&their_addr, port, addr);
+    return connect(socket, (struct sockaddr *) &their_addr, sizeof(struct sockaddr));
+}
+
+int connectToServer(int socket, int port, uint32_t ip) {
+    struct sockaddr_in their_addr;
+    initAddress(&their_addr, port, ip);
     return connect(socket, (struct sockaddr *) &their_addr, sizeof(struct sockaddr));
 }
 

@@ -7,7 +7,6 @@
 
 
 class Client;
-
 class PeerInfo;
 class Tracker;
 

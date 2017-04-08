@@ -4,9 +4,8 @@
 #include <string>
 #include "Torrent.hpp"
 #include "Tracker/TrackerMaster.hpp"
+#include "Peer/PeerConnection.hpp"
 
-
-class PeerInfo;
 
 class TrackerMaster;
 
@@ -21,7 +20,7 @@ class Client {
     int numBytesLeft;
 
 
-    std::set<PeerInfo> peers;
+    std::set<PeerConnection> peerConnections;
 
 
     void buildPeerID();
@@ -36,7 +35,7 @@ public:
     /* Trackers communication */
     void getNewPeers();
 
-    void addPeer(PeerInfo &peer);
+    void addPeerConnection(const PeerInfo &peer);
 
 
     const int8_t *getPeerID() const;
