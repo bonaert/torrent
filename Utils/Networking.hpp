@@ -10,7 +10,7 @@
 
 int initConnectionToServer(char *server_ip_address, int port);
 
-int initConnectionToServer(uint32_t ip, int port);
+int initConnectionToServer(uint32_t ip, int port, int timeout = 5);
 
 int createTCPSocket();
 
@@ -19,6 +19,8 @@ int createUDPSocket(int sourcePort, int timeout = 3);
 int connectToServer(int socket, int port, struct hostent *addr);
 
 int connectToServer(int socket, int port, uint32_t ip);
+
+bool connectToServer(int socket, int port, uint32_t ip, int timeout);
 
 int receiveData(int socket_fd, void *message, int length);
 

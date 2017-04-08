@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fcntl.h>
 #include "Networking.hpp"
 #include "Tools.hpp"
 
@@ -147,9 +148,9 @@ int initConnectionToServer(char *server_ip_address, int port) {
 }
 
 
-int initConnectionToServer(uint32_t ip, int port) {
+int initConnectionToServer(uint32_t ip, int port, int timeout) {
     int socket = createTCPSocket();
-    if (connectToServer(socket, port, ip) <= -1) {
+    if (connectToServer(socket, port, ip, timeout) <= -1) {
         const std::string &message = "The connect to the host with port "
                                      + std::to_string(port)
                                      + " and ip address "
@@ -242,6 +243,10 @@ struct sockaddr_in *buildAddress(const std::string &name, int port) {
 }
 
 
+void setSocketAsNonBlocking(int socket);
+
+void setSocketAsBlocking(int socket);
+
 /*
  * Returns the socket_fd created by the connect call.
  */
@@ -255,6 +260,67 @@ int connectToServer(int socket, int port, uint32_t ip) {
     struct sockaddr_in their_addr;
     initAddress(&their_addr, port, ip);
     return connect(socket, (struct sockaddr *) &their_addr, sizeof(struct sockaddr));
+}
+
+bool connectToServer(int socket, int port, uint32_t ip, int timeout) {
+    struct sockaddr_in their_addr;
+    struct timeval tv;
+    fd_set myset;
+    socklen_t lon;
+    int valopt;
+
+    initAddress(&their_addr, port, ip);
+
+
+
+    // Source: http://developerweb.net/viewtopic.php?id=3196
+    setSocketAsNonBlocking(socket);
+
+    // Trying to connect with timeout
+    std::cout << "Attempting to connect to IP " << getHumanReadableIP(ip)
+              << " at port " << port << std::endl;
+    int res = connect(socket, (struct sockaddr *) &their_addr, sizeof(their_addr));
+
+    if (res < 0) {
+        if (errno != EINPROGRESS) {
+            fprintf(stderr, "Error connecting %d - %s\n", errno, strerror(errno));
+            return false;
+        }
+
+        tv.tv_sec = timeout;
+        tv.tv_usec = 0;
+        FD_ZERO(&myset);
+        FD_SET(socket, &myset);
+        int code = select(socket + 1, NULL, &myset, NULL, &tv);
+        if (code > 0) {
+            lon = sizeof(int);
+            getsockopt(socket, SOL_SOCKET, SO_ERROR, (void *) (&valopt), &lon);
+            if (valopt) {
+                fprintf(stderr, "Error in connection() %d - %s\n", valopt, strerror(valopt));
+                return false;
+            }
+        } else {
+            lon = sizeof(int);
+            getsockopt(socket, SOL_SOCKET, SO_ERROR, (void *) (&valopt), &lon);
+            fprintf(stderr, "Timeout or error() %d - %s\n", valopt, strerror(valopt));
+            return false;
+        }
+
+    }
+    setSocketAsBlocking(socket);
+    return true;
+}
+
+void setSocketAsBlocking(int socket) {
+    long arg = fcntl(socket, F_GETFL, NULL);
+    arg &= (~O_NONBLOCK);
+    fcntl(socket, F_SETFL, arg);
+}
+
+void setSocketAsNonBlocking(int socket) {
+    long arg = fcntl(socket, F_GETFL, NULL);
+    arg |= O_NONBLOCK;
+    fcntl(socket, F_SETFL, arg);
 }
 
 

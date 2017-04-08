@@ -16,7 +16,7 @@ typedef struct PeerInfo {
 
     // Needed for std::set insertion
     bool operator<(const PeerInfo &other) const {
-        return ip < other.ip && port < other.port;
+        return ip < other.ip;
     }
 } PeerInfo;
 

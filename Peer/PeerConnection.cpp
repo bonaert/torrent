@@ -86,7 +86,8 @@ PeerConnection::PeerConnection(PeerInfo peerInfo, Client *client) :
 }
 
 void PeerConnection::connect() {
-    socket = initConnectionToServer((uint32_t) peerInfo.ip, peerInfo.port);
+    int timeout = 1;
+    socket = initConnectionToServer((uint32_t) peerInfo.ip, peerInfo.port, 5);
 }
 
 bool const PeerConnection::operator<(const PeerConnection &other) const {
