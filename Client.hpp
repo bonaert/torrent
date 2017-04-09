@@ -5,23 +5,23 @@
 #include "Torrent.hpp"
 #include "Tracker/TrackerMaster.hpp"
 #include "Peer/PeerConnection.hpp"
+#include "Peer/PeerManager.hpp"
 
 
 class TrackerMaster;
 
+class PeerManager;
+
 class Client {
     Torrent torrent;
     TrackerMaster trackerMaster;
+    PeerManager peerManager;
     int8_t peerID[20];
 
     /* Tracker information */
     int numBytesUploaded;
     int numBytesDownloaded;
     int numBytesLeft;
-
-
-    std::set<PeerConnection> peerConnections;
-
 
     void buildPeerID();
 

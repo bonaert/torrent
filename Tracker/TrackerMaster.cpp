@@ -25,6 +25,9 @@ void TrackerMaster::addTracker(const std::string &announceUrl) {
 void TrackerMaster::fetchNewPeersFromTracker() {
     for (auto &&tracker : trackers) {
         tracker->updatePeers();
+
+        // TODO: temporary, while this is not multithreaded
+        break;
     }
 
     std::cout << std::endl << std::endl;

@@ -124,3 +124,10 @@ void computeSHA1Hash(unsigned char *result, const std::string &text) {
     SHA1((const unsigned char *) text.c_str(), text.size(), result);
 }
 
+int min(int a, int b) {
+    return (a < b) ? a : b;
+}
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}

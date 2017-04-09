@@ -15,7 +15,7 @@
  * begin downloading when it is un-choked (and vice-versa).
  */
 
-class Client;
+class PeerManager;
 
 class PeerConnection {
 private:
@@ -24,15 +24,26 @@ private:
     bool peerChoking = true;    // peer is choking this client
     bool peerInterested = false; // peer is interested in this client
     PeerInfo peerInfo;
-    Client *client;
+    PeerManager *peerManager;
     int socket;
 public:
-    PeerConnection(PeerInfo peerInfo, Client *client);
+    PeerConnection(PeerInfo peerInfo, PeerManager *peerManager);
 
-    void connect();
+    bool connect();
+
+    bool connectToPeer();
+
+    bool doHandshake();
+
 
     // Need to define this to put PeerConnection in a std::set
     bool const operator<(const PeerConnection &other) const;
+
+    bool sendHandshake();
+
+    bool sendMessageToPeer(const std::string &message);
+
+    bool receiveHandshake();
 };
 
 
@@ -42,6 +53,8 @@ public:
  */
 
 std::string makeHandshakeMessage(const std::string &infoHash, const std::string &peerID);
+
+std::string makeHandshakeMessage(const int8_t *infoHash, const int8_t *peerID);
 
 /*
  * Messages

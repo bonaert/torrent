@@ -1,6 +1,8 @@
 #include <cstring>
 #include "PeerConnection.hpp"
 #include "../Utils/Networking.hpp"
+#include "PeerManager.hpp"
+#include "../Torrent.hpp"
 
 /* Handshake */
 
@@ -9,7 +11,6 @@ const int PROTOCOL_STRING_SIZE = (const int) PROTOCOL_STRING.length();
 const char RESERVED_BYTES[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 const std::string COMMON_MESSAGE =
-        "handshake:" + // TODO: not sure this is part of the message
         (char) PROTOCOL_STRING_SIZE + // The length must be encoded as a single byte
         PROTOCOL_STRING +
         RESERVED_BYTES; // TODO: check that this line is going to work
@@ -17,6 +18,12 @@ const std::string COMMON_MESSAGE =
 
 std::string makeHandshakeMessage(const std::string &infoHash, const std::string &peerID) {
     return COMMON_MESSAGE + infoHash + peerID;
+}
+
+std::string makeHandshakeMessage(const int8_t *infoHash, const int8_t *peerID) {
+    return COMMON_MESSAGE
+           + std::string((char *) infoHash, HASH_SIZE)
+           + std::string((char *) peerID, HASH_SIZE);
 }
 
 
@@ -78,18 +85,47 @@ std::string makeCancelMessage(int pieceIndex, int offset, int length) {
 // port: <len=0003><id=9><listen-port>
 char *makePortMessage(int port);
 
-PeerConnection::PeerConnection(PeerInfo peerInfo, Client *client) :
+PeerConnection::PeerConnection(PeerInfo peerInfo, PeerManager *peerManager) :
         peerInfo(peerInfo),
-        client(client),
+        peerManager(peerManager),
         socket(-1) {
 
 }
 
-void PeerConnection::connect() {
-    int timeout = 1;
-    socket = initConnectionToServer((uint32_t) peerInfo.ip, peerInfo.port, 5);
+bool PeerConnection::connect() {
+    int timeout = 5;
+    socket = initConnectionToServer((uint32_t) peerInfo.ip, peerInfo.port, timeout);
+    return (socket != -1);
 }
 
 bool const PeerConnection::operator<(const PeerConnection &other) const {
     return peerInfo < other.peerInfo;
+}
+
+bool PeerConnection::doHandshake() {
+    bool success = sendHandshake();
+    if (!success) return false;
+    return receiveHandshake();
+}
+
+bool PeerConnection::sendHandshake() {
+    const int8_t *infoHash = peerManager->getInfoHash();
+    const int8_t *peerID = peerManager->getPeerID();
+    const std::string &message = makeHandshakeMessage(infoHash, peerID);
+    return sendMessageToPeer(message);
+}
+
+bool PeerConnection::sendMessageToPeer(const std::string &message) {
+    int bytesSent = sendData(socket, message.c_str(), (int) message.size());
+    return bytesSent == message.size();
+}
+
+bool PeerConnection::connectToPeer() {
+    bool couldConnect = connect();
+    if (!couldConnect) return false;
+    return doHandshake();
+}
+
+bool PeerConnection::receiveHandshake() {
+    return false;
 }

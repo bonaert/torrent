@@ -32,7 +32,7 @@ int receiveMessage(int socket_fd, char *buffer);
 
 bool receiveMessageWithTimeout(int socket_fd, char *buffer, int timeout);
 
-int sendData(int socket_fd, char *buffer, int length);
+int sendData(int socket_fd, const char *buffer, int length);
 
 int sendMessage(int socket_fd, const char *message);
 

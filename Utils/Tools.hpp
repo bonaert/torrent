@@ -34,4 +34,8 @@ bool startsWith(const std::string &source, const std::string &beginning);
 
 void computeSHA1Hash(unsigned char *result, const std::string &text);
 
+int min(int a, int b);
+
+int max(int a, int b);
+
 #endif //TORRENT_TOOLS_HPP

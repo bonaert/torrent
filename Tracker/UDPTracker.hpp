@@ -8,6 +8,13 @@
 
 
 /*
+ * Here are a list of urls I found in a couple of torrent files:
+ *   - "udp://tracker.istole.it:80/announce"
+ *   - "udp://tracker.1337x.org:80"
+ *   - "udp://fr33dom.h33t.com:3310/announce"
+ */
+
+/*
  *
  * TRACKER UDP REQUEST
  *

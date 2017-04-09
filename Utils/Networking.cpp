@@ -97,7 +97,7 @@ bool receiveMessageWithTimeout(int socket_fd, char *buffer, int timeout_val) {
 
 // Send
 
-int sendData(int socket_fd, char *buffer, int length) {
+int sendData(int socket_fd, const char *buffer, int length) {
     int bytes_sent = 0;
     int bytes_to_send = length;
     while (bytes_to_send > 0) {
