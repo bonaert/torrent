@@ -22,6 +22,7 @@ void downloadTorrent(std::string filename) {
     std::cout << "Total size: " << totalSize << " bytes" << std::endl;
     std::cout << "Number of pieces: " << numPieces << " pieces" << std::endl;
     std::cout << "Piece size: " << pieceSize << " bytes" << std::endl;
+    std::cout << std::endl << std::endl << std::endl << std::endl;
 
 
     Client client(torrent);
@@ -62,7 +63,7 @@ void setup() {
 
 int main() {
     setup();
-    std::cout << "Hello, World!" << std::endl;
+    std::cout << std::endl << std::endl;
 //    const char *filename = "/home/greg/Downloads/torrents/[kat.cr]silicon.valley.s03e07.hdtv.x264.killers.ettv.torrent";
     const char *filename = "/home/greg/Downloads/torrents/[kat.cr]shutter.island.2010.720p.1280.544.600mb.torrent";
     downloadTorrent(filename);

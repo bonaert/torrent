@@ -1,15 +1,16 @@
 #include "PeerManager.hpp"
+
 #include "../Client.hpp"
 #include "../Utils/Networking.hpp"
 
 PeerManager::PeerManager(Client *client) :
         client(client),
         threadPool(DEFAULT_PEER_THREADS) {
-    start();
 }
 
 void PeerManager::addPeerToQueue(PeerInfo peer) {
-    threadPool.postTask(&PeerManager::startConnection, peer);
+    // TODO: this line fucks up everything
+    //threadPool.postTask(PeerManager::startConnection, peer);
 }
 
 void PeerManager::startConnection(PeerInfo peer) {
