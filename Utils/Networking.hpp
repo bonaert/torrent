@@ -55,4 +55,6 @@ std::string getDomainFromUrl(const std::string &url);
 
 std::string getHumanReadableIP(uint32_t ip);
 
+std::string getHumanReadableIP(int32_t ip);
+
 #endif //PROJET_NETWORKING_H

@@ -1,10 +1,12 @@
 #ifndef TORRENT_PEERMANAGER_HPP
 #define TORRENT_PEERMANAGER_HPP
 
-#include <thread>
 #include <vector>
 #include "../Tracker/Tracker.hpp"
 #include "PeerConnection.hpp"
+#include "../Utils/ThreadPool.hpp"
+
+const int DEFAULT_PEER_THREADS = 20;
 
 /*
  * PeerManager controls the different PeerConnections. It's here to decide
@@ -13,28 +15,22 @@
  */
 class PeerManager {
 private:
-    std::vector<std::thread> threads;
-    std::vector<PeerConnection> peerConnections;
-public:
-    const std::vector<PeerConnection> &getPeerConnections() const;
-
-private:
-    std::vector<PeerInfo> peerQueue;
-    const int MAX_THREADS = 20;
+    ThreadPool threadPool;
     Client *client;
 
-    void startPeerConnections();
 
 public:
     PeerManager(Client *client);
-
-    void addPeer(const PeerInfo &peer);
 
     const int8_t *getInfoHash();
 
     const int8_t *getPeerID();
 
     void start();
+
+    void addPeerToQueue(PeerInfo peer);
+
+    static void startConnection(PeerInfo peer);
 };
 
 

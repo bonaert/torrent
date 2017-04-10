@@ -35,7 +35,7 @@ void Client::getNewPeers() {
 }
 
 void Client::addPeerConnection(const PeerInfo &peer) {
-    peerManager.addPeer(peer);
+    peerManager.addPeerToQueue(peer);
 }
 
 void Client::getDataFromPeers() {

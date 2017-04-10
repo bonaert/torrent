@@ -357,3 +357,7 @@ std::string getHumanReadableIP(uint32_t ip) {
     ip_addr.s_addr = ip;
     return inet_ntoa(ip_addr);
 };
+
+std::string getHumanReadableIP(int32_t ip) {
+    return getHumanReadableIP((uint32_t) ip);
+};
