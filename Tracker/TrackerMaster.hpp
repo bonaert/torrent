@@ -25,6 +25,8 @@ public:
 
     void addTracker(const std::string &announceUrl);
 
+    void startFetchingPeers();
+
     void fetchNewPeersFromTracker();
 
     const int8_t *getInfoHash();

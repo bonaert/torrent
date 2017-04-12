@@ -3,20 +3,18 @@
 
 #include <string>
 #include "Torrent.hpp"
-#include "Tracker/TrackerMaster.hpp"
-#include "Peer/PeerConnection.hpp"
-#include "Peer/PeerManager.hpp"
+#include "Tracker/Tracker.hpp"
 
 
 class TrackerMaster;
-
 class PeerManager;
 
 class Client {
     Torrent torrent;
-    TrackerMaster trackerMaster;
-    PeerManager peerManager;
+    TrackerMaster *trackerMaster;
+    PeerManager *peerManager;
     int8_t peerID[20];
+    bool hasStarted;
 
     /* Tracker information */
     int numBytesUploaded;
@@ -32,11 +30,6 @@ public:
 
     void setup();
 
-    /* Trackers communication */
-    void getNewPeers();
-
-    void addPeerConnection(const PeerInfo &peer);
-
 
     const int8_t *getPeerID() const;
 
@@ -50,7 +43,7 @@ public:
 
     void start();
 
-    void getDataFromPeers();
+    void handleNewPeer(PeerInfo peer);
 };
 
 

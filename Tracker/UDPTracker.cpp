@@ -23,6 +23,7 @@ UDPTracker::UDPTracker(TrackerMaster *trackerMaster, const std::string &announce
 }
 
 void UDPTracker::updatePeers() {
+    peers.clear();
     bool foundServer = udpCommunicator->connect();
     if (foundServer) {
         std::cout << "Connected to tracker " << trackerDomain << std::endl;
@@ -76,8 +77,10 @@ bool UDPTracker::processGetPeersResponse() {
 
     for (PeerInfo &peer : announceResponse.peers) {
         addPeer(peer);
-        std::cout << "Added leecher with IP " << getHumanReadableIP((uint32_t) peer.ip) << std::endl;
+//        std::cout << "Added leecher with IP " << getHumanReadableIP((uint32_t) peer.ip) << std::endl;
     }
+
+    std::cout << "Found " << announceResponse.peers.size() << " new peers." << std::endl;
     return true;
 }
 

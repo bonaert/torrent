@@ -19,7 +19,7 @@ void ThreadPool::start() {
         work = new boost::asio::io_service::work(ioService);
         hasLoopStarted = true;
     } else {
-        throw "The pool has already started!";
+        throw std::logic_error("The pool has already started!");
     }
 }
 
@@ -31,7 +31,7 @@ void ThreadPool::stop() {
     if (hasStarted()) {
         ioService.stop();
     } else {
-        throw "The pool hasn't started yet!";
+        throw std::logic_error("The pool hasn't started yet!");
     }
 }
 
@@ -51,19 +51,3 @@ bool ThreadPool::hasStarted() {
 void ThreadPool::joinAll() {
     threadpool.join_all();
 }
-
-/*
- * This will assign tasks to the thread pool.
- * More about boost::bind: "http://www.boost.org/doc/libs/1_54_0/libs/bind/bind.html#with_functions"
- */
-template<typename F>
-void ThreadPool::postTask(F f) {
-    ioService.post(boost::bind(f));
-}
-
-template<typename F, typename A>
-void ThreadPool::postTask(F f, A a) {
-    ioService.post(boost::bind(f, a));
-}
-
-

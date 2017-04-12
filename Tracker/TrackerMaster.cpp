@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unistd.h>
 #include "TrackerMaster.hpp"
 #include "../Client.hpp"
 #include "HTTPTracker.hpp"
@@ -33,10 +34,12 @@ void TrackerMaster::fetchNewPeersFromTracker() {
     std::cout << std::endl << std::endl;
     for (const Tracker *tracker : trackers) {
         for (const PeerInfo &peer : tracker->getPeers()) {
+            client->handleNewPeer(peer);
             allPeers.insert(peer);
-            std::cout << "Current peer: " << getHumanReadableIP((uint32_t) peer.ip) << std::endl;
+//            std::cout << "Current peer: " << getHumanReadableIP((uint32_t) peer.ip) << std::endl;
         }
     }
+
 }
 
 const int8_t *TrackerMaster::getInfoHash() {
@@ -61,5 +64,14 @@ int64_t TrackerMaster::getNumBytesUploaded() {
 
 const std::set<PeerInfo> &TrackerMaster::getAllPeers() const {
     return allPeers;
+}
+
+void TrackerMaster::startFetchingPeers() {
+    // This should run on a separate thread
+    while (true) {
+        // TODO: put an end to this madness! aka write while stop condition
+        fetchNewPeersFromTracker();
+        sleep(10);
+    }
 }
 

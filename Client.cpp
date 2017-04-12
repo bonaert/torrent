@@ -1,11 +1,20 @@
 #include "Client.hpp"
+#include "Peer/PeerManager.hpp"
 
 
-Client::Client(std::string &filename) : trackerMaster(this), peerManager(this), torrent(filename) {
+Client::Client(std::string &filename) :
+        trackerMaster(nullptr),
+        peerManager(nullptr),
+        hasStarted(false),
+        torrent(filename) {
     setup();
 }
 
-Client::Client(Torrent &torrent) : trackerMaster(this), peerManager(this), torrent(torrent) {
+Client::Client(Torrent &torrent) :
+        trackerMaster(nullptr),
+        peerManager(nullptr),
+        hasStarted(false),
+        torrent(torrent) {
     setup();
 }
 
@@ -15,31 +24,26 @@ void Client::setup() {
     numBytesDownloaded = 0;
     numBytesLeft = torrent.size();
 
-    trackerMaster.addTracker(torrent.metaInfo.announceURL);
+    trackerMaster = new TrackerMaster(this);
+    trackerMaster->addTracker(torrent.metaInfo.announceURL);
     for (auto &&announceUrl : torrent.metaInfo.announceList) {
-        trackerMaster.addTracker(announceUrl);
+        trackerMaster->addTracker(announceUrl);
     }
 }
 
 
 void Client::start() {
-    getNewPeers();
-    getDataFromPeers();
-}
-
-void Client::getNewPeers() {
-    trackerMaster.fetchNewPeersFromTracker();
-    for (const PeerInfo &peer : trackerMaster.getAllPeers()) {
-        addPeerConnection(peer);
+    if (hasStarted) {
+        throw std::logic_error("Client has already started!");
     }
+
+    peerManager = new PeerManager(this); // Starts the peer thread pool automatically
+    trackerMaster->startFetchingPeers();
+    hasStarted = true;
 }
 
-void Client::addPeerConnection(const PeerInfo &peer) {
-    peerManager.addPeerToQueue(peer);
-}
-
-void Client::getDataFromPeers() {
-    peerManager.start();
+void Client::handleNewPeer(PeerInfo peer) {
+    peerManager->handleNewPeerFound(peer);
 }
 
 
@@ -81,6 +85,8 @@ int Client::getNumBytesLeft() const {
 const int8_t *Client::getInfoHash() const {
     return (const int8_t *) torrent.metaInfo.infoDictHash;
 }
+
+
 
 
 

@@ -20,7 +20,7 @@ set(SOURCE_FILES
         Utils/UDPCommunicator.cpp Utils/UDPCommunicator.hpp
         Utils/Networking.cpp Utils/Networking.hpp
         Utils/ThreadPool.cpp Utils/ThreadPool.hpp
-        )
+        lib/threadpool/Threadpool.hpp)
 
 add_executable(torrent main.cpp ${SOURCE_FILES})
 add_executable(torrentTest test.cpp ${SOURCE_FILES})

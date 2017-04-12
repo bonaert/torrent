@@ -18,6 +18,7 @@ HTTPTracker::HTTPTracker(TrackerMaster *trackerMaster, const std::string &announ
 }
 
 void HTTPTracker::updatePeers() {
+    peers.clear();
     bool success = sendGetPeersRequest();
     if (success) {
         getResponseFromTracker();

@@ -4,7 +4,8 @@
 #include <vector>
 #include "../Tracker/Tracker.hpp"
 #include "PeerConnection.hpp"
-#include "../Utils/ThreadPool.hpp"
+//#include "../Utils/ThreadPool.hpp"
+#include "../lib/threadpool/Threadpool.hpp"
 
 const int DEFAULT_PEER_THREADS = 20;
 
@@ -17,6 +18,7 @@ class PeerManager {
 private:
     ThreadPool threadPool;
     Client *client;
+    int numTasksAdded;
 
 
 public:
@@ -26,11 +28,11 @@ public:
 
     const int8_t *getPeerID();
 
-    void start();
+    void handleNewPeerFound(PeerInfo peer);
 
-    void addPeerToQueue(PeerInfo peer);
+    static void startConnection(PeerInfo peer, int numTask);
 
-    static void startConnection(PeerInfo peer);
+    bool peerConnectionAlreadyExists(const PeerInfo &info);
 };
 
 
