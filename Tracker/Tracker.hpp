@@ -31,7 +31,7 @@ public:
 
     virtual void updatePeers() = 0;
 
-    virtual const std::vector<PeerInfo> &getPeers() const;
+    virtual const std::vector<PeerInfo> &getNewPeers() const;
 
     virtual void addPeer(PeerInfo &peerInfo);
 };

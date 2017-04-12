@@ -4,7 +4,7 @@ Tracker::Tracker(TrackerMaster *trackerMaster) : trackerMaster(trackerMaster) {
 
 }
 
-const std::vector<PeerInfo> &Tracker::getPeers() const {
+const std::vector<PeerInfo> &Tracker::getNewPeers() const {
     return peers;
 }
 

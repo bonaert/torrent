@@ -17,9 +17,9 @@ void TrackerMaster::addTracker(const std::string &announceUrl) {
     } else if (startsWith(announceUrl, "udp://")) {
         tracker = new UDPTracker(this, announceUrl);
     } else {
-        std::cout << "Invalid url " << announceUrl << std::endl;
-        return;
+        throw std::invalid_argument("Invalid url " + announceUrl);
     }
+
     trackers.push_back(tracker);
 }
 
@@ -27,19 +27,13 @@ void TrackerMaster::fetchNewPeersFromTracker() {
     for (auto &&tracker : trackers) {
         tracker->updatePeers();
 
-        // TODO: temporary, while this is not multithreaded
-        break;
-    }
-
-    std::cout << std::endl << std::endl;
-    for (const Tracker *tracker : trackers) {
-        for (const PeerInfo &peer : tracker->getPeers()) {
+        for (const PeerInfo &peer : tracker->getNewPeers()) {
             client->handleNewPeer(peer);
-            allPeers.insert(peer);
 //            std::cout << "Current peer: " << getHumanReadableIP((uint32_t) peer.ip) << std::endl;
         }
     }
 
+    std::cout << std::endl << std::endl;
 }
 
 const int8_t *TrackerMaster::getInfoHash() {
@@ -60,10 +54,6 @@ int64_t TrackerMaster::getNumBytesLeft() {
 
 int64_t TrackerMaster::getNumBytesUploaded() {
     return client->getNumBytesUploaded();
-}
-
-const std::set<PeerInfo> &TrackerMaster::getAllPeers() const {
-    return allPeers;
 }
 
 void TrackerMaster::startFetchingPeers() {

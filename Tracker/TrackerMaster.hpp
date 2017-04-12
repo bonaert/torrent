@@ -14,12 +14,8 @@ class Tracker;
 class TrackerMaster {
 private:
     std::vector<Tracker *> trackers;
-    std::set<PeerInfo> allPeers;
-public:
-    const std::set<PeerInfo> &getAllPeers() const;
-
-private:
     Client *client;
+
 public:
     TrackerMaster(Client *client);
 
