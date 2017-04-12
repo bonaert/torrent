@@ -26,24 +26,26 @@ private:
     PeerInfo peerInfo;
     PeerManager *peerManager;
     int socket;
-public:
-    PeerConnection(PeerInfo peerInfo, PeerManager *peerManager);
+
 
     bool connect();
 
-    bool connectToPeer();
-
     bool doHandshake();
 
+    bool sendHandshake();
+
+    bool receiveHandshake();
+
+
+public:
+    PeerConnection(PeerInfo peerInfo, PeerManager *peerManager);
+
+    bool connectToPeer();
 
     // Need to define this to put PeerConnection in a std::set
     bool const operator<(const PeerConnection &other) const;
 
-    bool sendHandshake();
-
     bool sendMessageToPeer(const std::string &message);
-
-    bool receiveHandshake();
 };
 
 

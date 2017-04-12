@@ -30,7 +30,7 @@ public:
 
     void handleNewPeerFound(PeerInfo peer);
 
-    static void startConnection(PeerInfo peer, int numTask);
+    static void startConnection(PeerInfo peer, int numTask, PeerManager *peerManager);
 
     bool peerConnectionAlreadyExists(const PeerInfo &info);
 };

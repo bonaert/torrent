@@ -61,7 +61,7 @@ void TrackerMaster::startFetchingPeers() {
     while (true) {
         // TODO: put an end to this madness! aka write while stop condition
         fetchNewPeersFromTracker();
-        sleep(10);
+        sleep(500);
     }
 }
 

@@ -1,4 +1,5 @@
 #include <cstring>
+#include <iostream>
 #include "PeerConnection.hpp"
 #include "../Utils/Networking.hpp"
 #include "PeerManager.hpp"
@@ -122,7 +123,10 @@ bool PeerConnection::sendMessageToPeer(const std::string &message) {
 
 bool PeerConnection::connectToPeer() {
     bool couldConnect = connect();
-    if (!couldConnect) return false;
+    if (!couldConnect) {
+        return false;
+    }
+    std::cout << "Connected to IP " << getHumanReadableIP(peerInfo.ip) << std::endl;
     return doHandshake();
 }
 

@@ -12,12 +12,13 @@ PeerManager::PeerManager(Client *client) :
 
 void PeerManager::handleNewPeerFound(PeerInfo peer) {
     if (!peerConnectionAlreadyExists(peer)) {
-        threadPool.enqueue(PeerManager::startConnection, peer, numTasksAdded++);
+        threadPool.enqueue(PeerManager::startConnection, peer, numTasksAdded++, this);
     }
 }
 
-void PeerManager::startConnection(PeerInfo peer, int numTask) {
-    std::cout << "Added peer " << numTask << " - " << getHumanReadableIP(peer.ip) << ". Sleeping." << std::endl;
+void PeerManager::startConnection(PeerInfo peer, int numTask, PeerManager *peerManager) {
+    PeerConnection connection(peer, peerManager);
+    connection.connectToPeer();
     sleep(2);
 }
 
