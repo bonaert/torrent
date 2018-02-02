@@ -4,7 +4,7 @@ I wanted to learn how Bittorrent works, so I made the simplest and clearest Bitt
 Only the the minimal amount of stuff needed to make it usable has been implemented.
 The goal was to make the code clear, simple and as easy to read and use as possible.
 
-The [main.cpp](https://github.com/harokb/torrent/blob/master/main.cpp) file contains an example of how the Torrent class can be used. It's still in progress, so the API may change.
+The [main.cpp](https://github.com/bonaert/torrent/blob/master/main.cpp) file contains an example of how the Torrent class can be used. It's still in progress, so the API may change.
 Here's some sample code:
 
 ```cpp
