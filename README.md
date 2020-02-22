@@ -4,6 +4,8 @@ I wanted to learn how Bittorrent works, so I made the simplest and clearest Bitt
 Only the the minimal amount of stuff needed to make it usable has been implemented.
 The goal was to make the code clear, simple and as easy to read and use as possible.
 
+**Note**: a big surprise is that almost all real-life torrenting uses μTP (micro transport protocol), making it considerably more difficult to get started torrenting real-life torrents, since it requires implementing that protocol or adopting a library. I attempted to use the libtorrent implementation but it didn't work out, and I haven't had time to delve into the details to make it work. However, the current implementation should be OK for torrenting with normal networking protocols. The project is incomplete though, **once I have more time I will finish implementing the whole stack. The majority of the code is already present though!**.
+
 The [main.cpp](https://github.com/bonaert/torrent/blob/master/main.cpp) file contains an example of how the Torrent class can be used. It's still in progress, so the API may change.
 Here's some sample code:
 
